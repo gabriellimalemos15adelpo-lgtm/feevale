@@ -1,0 +1,10 @@
+# Contexto e instruções locais — contêm dados pessoais (nome, faculdade, empregador).
+# Ficam só no PC, fora do repositório público.
+CLAUDE.md
+COMECE-AQUI.md
+.claude/
+
+# Lixo do Windows
+Thumbs.db
+desktop.ini
+*.tmp

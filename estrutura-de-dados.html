@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estrutura de Dados — Material de Estudo</title>
+<style>
+  :root {
+    --ink: #1a1c22;
+    --ink-soft: #4a4f5c;
+    --paper: #f7f5ef;
+    --card: #ffffff;
+    --line: #e2ddd0;
+    --accent: #2e5e4e;
+    --accent-soft: #d8e6df;
+    --amber: #b7791f;
+    --amber-soft: #f5ead2;
+    --code-bg: #21242c;
+    --code-ink: #e8e6e0;
+    --mono: 'SF Mono', 'JetBrains Mono', 'Fira Code', ui-monospace, 'Cascadia Code', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 100px; }
+
+  /* Cabeçalho da disciplina */
+  header {
+    padding: 56px 0 32px;
+    border-bottom: 3px solid var(--ink);
+    margin-bottom: 0;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-size: clamp(32px, 5.5vw, 46px);
+    line-height: 1.05;
+    margin: 0 0 12px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .sub { font-size: 17px; color: var(--ink-soft); margin: 0; max-width: 620px; }
+
+  /* Barra de abas dos roteiros */
+  .tabbar {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(247,245,239,0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    margin: 0 -24px 40px;
+    padding: 10px 24px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .tab {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 7px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tab.empty { opacity: 0.45; font-style: italic; }
+
+  /* Painel de roteiro */
+  .roteiro { display: none; }
+  .roteiro.active { display: block; }
+
+  /* Placeholder de roteiro vazio */
+  .placeholder {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--ink-soft);
+  }
+  .placeholder .big { font-size: 40px; margin-bottom: 16px; opacity: 0.5; }
+  .placeholder h2 { font-size: 22px; color: var(--ink); margin: 0 0 8px; }
+  .placeholder p { font-size: 15px; max-width: 400px; margin: 8px auto; }
+  .placeholder code {
+    font-family: var(--mono); font-size: 13px;
+    background: var(--accent-soft); color: var(--accent);
+    padding: 2px 8px; border-radius: 5px;
+  }
+
+  /* Navegação interna de seções */
+  nav.secnav {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 36px;
+  }
+  nav.secnav a {
+    font-family: var(--mono); font-size: 12px; text-decoration: none;
+    color: var(--ink-soft); padding: 5px 11px;
+    border: 1px solid var(--line); border-radius: 100px; transition: all .15s;
+  }
+  nav.secnav a:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  section { margin-bottom: 56px; scroll-margin-top: 70px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+  .sec-num {
+    font-family: var(--mono); font-size: 13px; color: #fff;
+    background: var(--accent); padding: 3px 9px; border-radius: 5px; font-weight: 600;
+  }
+  h2 { font-size: 28px; margin: 0; letter-spacing: -0.3px; }
+  .roteiro-title {
+    font-size: clamp(24px, 4vw, 32px); margin: 0 0 6px; letter-spacing: -0.3px;
+  }
+  .roteiro-lead { font-size: 16px; color: var(--ink-soft); margin: 0 0 36px; }
+  h3 { font-size: 19px; margin: 32px 0 10px; color: var(--accent); }
+  p { margin: 12px 0; }
+  .lead { font-size: 17px; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 7px 0; }
+  strong { color: var(--ink); }
+  em.term { font-style: normal; font-weight: 700; color: var(--accent); }
+
+  .exam {
+    background: var(--amber-soft); border-left: 4px solid var(--amber);
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0;
+  }
+  .exam .tag {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--amber); font-weight: 700;
+    display: block; margin-bottom: 4px;
+  }
+  .exam p { margin: 4px 0; }
+
+  pre {
+    background: var(--code-bg); color: var(--code-ink); padding: 18px 20px;
+    border-radius: 10px; overflow-x: auto; font-family: var(--mono);
+    font-size: 13.5px; line-height: 1.7; margin: 16px 0;
+  }
+  code { font-family: var(--mono); }
+  p code, li code {
+    background: var(--accent-soft); color: var(--accent);
+    padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+  }
+  .cmt { color: #8b93a5; }
+  .kw { color: #c9a0ff; }
+  .str { color: #9ece6a; }
+  .num { color: #ff9e64; }
+
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 15px; }
+  th {
+    text-align: left; background: var(--accent); color: #fff; padding: 10px 14px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code { background: var(--accent-soft); color: var(--accent); padding: 1px 5px; border-radius: 4px; }
+
+  .array-viz { display: flex; flex-wrap: wrap; gap: 0; margin: 18px 0; font-family: var(--mono); }
+  .cell { border: 1.5px solid var(--ink); border-right: none; min-width: 56px; text-align: center; }
+  .cell:last-child { border-right: 1.5px solid var(--ink); }
+  .cell .idx { background: var(--ink); color: #fff; font-size: 12px; padding: 3px 0; }
+  .cell .val { padding: 10px 0; font-size: 16px; font-weight: 600; }
+
+  /* Flashcards */
+  .fc-intro { color: var(--ink-soft); font-size: 15px; margin-bottom: 20px; }
+  .flashcard {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    margin: 12px 0; overflow: hidden; cursor: pointer;
+    transition: box-shadow .18s, transform .18s;
+  }
+  .flashcard:hover { box-shadow: 0 6px 22px rgba(46,94,78,0.10); }
+  .fc-q { padding: 18px 22px; display: flex; align-items: flex-start; gap: 14px; font-size: 16.5px; font-weight: 600; }
+  .fc-q .qmark { font-family: var(--mono); color: var(--accent); font-weight: 700; flex-shrink: 0; }
+  .fc-a {
+    max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s ease;
+    padding: 0 22px; background: var(--accent-soft); font-size: 15.5px; line-height: 1.65;
+  }
+  .flashcard.open .fc-a { max-height: 600px; padding: 16px 22px 20px; }
+  .fc-a code { background: rgba(255,255,255,0.7); color: var(--accent); padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+  .flashcard .hint { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); padding: 0 22px 12px; letter-spacing: 0.5px; }
+  .flashcard.open .hint { display: none; }
+  .goto {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.4px;
+    text-decoration: none; color: var(--accent); background: rgba(255,255,255,0.75);
+    border: 1px solid var(--accent); padding: 6px 12px; border-radius: 100px; transition: all .15s;
+  }
+  .goto:hover { background: var(--accent); color: #fff; }
+  .goto .arrow { font-size: 13px; }
+  .fc-controls { display: flex; gap: 10px; margin-bottom: 18px; }
+  .fc-btn {
+    font-family: var(--mono); font-size: 12px; background: none;
+    border: 1px solid var(--accent); color: var(--accent); padding: 7px 14px;
+    border-radius: 100px; cursor: pointer; transition: all .15s;
+  }
+  .fc-btn:hover { background: var(--accent); color: #fff; }
+
+  footer {
+    border-top: 1px solid var(--line); padding-top: 24px; margin-top: 60px;
+    font-size: 13px; color: var(--ink-soft); font-family: var(--mono); line-height: 1.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Análise e Desenvolvimento de Sistemas · Feevale</p>
+    <h1>Estrutura de Dados</h1>
+    <p class="sub">Material de estudo condensado, organizado por roteiro. Cada aba traz o resumo da matéria e flashcards para testar a memória antes da prova.</p>
+  </header>
+
+  <!-- ABAS: uma por roteiro. Marque como .empty as ainda não preenchidas. -->
+  <div class="tabbar" id="tabbar">
+    <button class="tab" onclick="showRoteiro('roteiro-1', this)">01 · Arrays e ArrayList</button>
+    <button class="tab empty" onclick="showRoteiro('roteiro-2', this)">02 · (a definir)</button>
+    <button class="tab empty" onclick="showRoteiro('roteiro-3', this)">03 · (a definir)</button>
+    <button class="tab empty" onclick="showRoteiro('roteiro-4', this)">04 · (a definir)</button>
+    <button class="tab empty" onclick="showRoteiro('roteiro-5', this)">05 · (a definir)</button>
+    <button class="tab empty" onclick="showRoteiro('roteiro-6', this)">06 · (a definir)</button>
+  </div>
+
+  <!-- PAINÉIS DOS ROTEIROS -->
+  <div class="roteiro" id="roteiro-1">
+    <h2 class="roteiro-title">Arrays, Matrizes e ArrayList</h2>
+    <p class="roteiro-lead">Resumo condensado das três fontes do roteiro (material do professor, Cap. 7 do Deitel e videoaula), seguido de flashcards para testar a memória antes da prova.</p>
+
+    <nav class="secnav">
+      <a href="#r1-s1">1 · Fundamentos</a>
+      <a href="#r1-s2">2 · Vetores</a>
+      <a href="#r1-s3">3 · Exceções</a>
+      <a href="#r1-s4">4 · Métodos</a>
+      <a href="#r1-s5">5 · Matrizes</a>
+      <a href="#r1-s6">6 · Classe Arrays</a>
+      <a href="#r1-s7">7 · ArrayList</a>
+      <a href="#r1-flash">★ Flashcards</a>
+    </nav>
+
+    <section id="r1-s1">
+      <div class="sec-head"><span class="sec-num">01</span><h2>Fundamentos</h2></div>
+      <p class="lead">Um <em class="term">array</em> é uma estrutura de dados que armazena um conjunto de valores <strong>todos do mesmo tipo</strong> (int, double, char, boolean, String…). Por isso é chamado de estrutura <strong>homogênea</strong>.</p>
+      <h3>Características que definem um array</h3>
+      <ul>
+        <li><strong>Tamanho fixo:</strong> definido na criação e imutável. Para "aumentar", cria-se um array novo.</li>
+        <li><strong>Alocação estática:</strong> ao declarar, você já indica o tamanho e o tipo.</li>
+        <li><strong>Índice a partir de 0:</strong> o primeiro elemento é a posição <code>0</code> (zero-ésimo elemento); o último é <code>tamanho − 1</code>.</li>
+        <li><strong>Posições contíguas na memória:</strong> os elementos ficam em sequência.</li>
+        <li><strong>É um objeto:</strong> arrays são tipos por referência e criados com <code>new</code>.</li>
+      </ul>
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>Um array de <strong>12 elementos</strong> vai do índice <code>0</code> ao <code>11</code>. O índice mais alto é sempre <strong>1 a menos</strong> que o número de elementos. Confundir isso gera erro de "fora dos limites".</p>
+      </div>
+      <h3>Declaração e criação</h3>
+      <pre><span class="cmt">// dois passos: declara e depois aloca</span>
+<span class="kw">int</span>[] c;              <span class="cmt">// declara a variável de array</span>
+c = <span class="kw">new int</span>[<span class="num">12</span>];      <span class="cmt">// cria o array com 12 posições</span>
+
+<span class="cmt">// tudo numa linha só</span>
+<span class="kw">int</span>[] c = <span class="kw">new int</span>[<span class="num">12</span>];</pre>
+      <p>Ao criar, cada posição recebe um <strong>valor padrão</strong> automático:</p>
+      <table>
+        <tr><th>Tipo do array</th><th>Valor inicial padrão</th></tr>
+        <tr><td><code>int</code>, <code>double</code>, <code>float</code></td><td><code>0</code> / <code>0.0</code></td></tr>
+        <tr><td><code>boolean</code></td><td><code>false</code></td></tr>
+        <tr><td><code>String</code> e outros objetos</td><td><code>null</code></td></tr>
+      </table>
+      <h3>Inicializando com valores (initializer)</h3>
+      <pre><span class="cmt">// a lista entre chaves define os valores E o tamanho</span>
+<span class="kw">int</span>[] n = { <span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span> };  <span class="cmt">// tamanho 5, índices 0 a 4</span>
+String[] beatles = { <span class="str">"John"</span>, <span class="str">"Paul"</span>, <span class="str">"George"</span>, <span class="str">"Ringo"</span> };</pre>
+    </section>
+
+    <section id="r1-s2">
+      <div class="sec-head"><span class="sec-num">02</span><h2>Vetores (array 1D)</h2></div>
+      <p class="lead">Um <em class="term">vetor</em> é um array de <strong>uma única dimensão</strong>. Precisa de apenas um índice para acessar cada elemento.</p>
+      <div class="array-viz">
+        <div class="cell"><div class="idx">0</div><div class="val">5</div></div>
+        <div class="cell"><div class="idx">1</div><div class="val">10</div></div>
+        <div class="cell"><div class="idx">2</div><div class="val">15</div></div>
+        <div class="cell"><div class="idx">3</div><div class="val">20</div></div>
+        <div class="cell"><div class="idx">4</div><div class="val">25</div></div>
+      </div>
+      <h3>Acessando e percorrendo</h3>
+      <p>Acesso direto pelo índice: <code>vetor[0]</code> devolve o primeiro valor. Para percorrer, usa-se um laço. A propriedade <code>vetor.length</code> devolve o número de elementos (é atributo, <strong>sem parênteses</strong>).</p>
+      <pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; vetor.length; i++)
+    System.out.println(vetor[i]);</pre>
+      <div class="exam">
+        <span class="tag">Pegadinha comum</span>
+        <p>Em array é <code>.length</code> <strong>sem parênteses</strong> (é uma variável). Em String é <code>.length()</code> <strong>com parênteses</strong> (é método). E em ArrayList é <code>.size()</code>. Trocar isso é erro clássico de prova.</p>
+      </div>
+      <h3>for-each (for aprimorado)</h3>
+      <p>Percorre os elementos sem contador, evitando "pisar fora" do array. <strong>Limitação:</strong> serve só para <strong>ler</strong> os elementos — não consegue modificá-los nem dá acesso ao índice.</p>
+      <pre><span class="kw">int</span> total = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> numero : array)   <span class="cmt">// "para cada numero em array"</span>
+    total += numero;</pre>
+    </section>
+
+    <section id="r1-s3">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Tratamento de exceções</h2></div>
+      <p class="lead">Se o código tentar acessar uma posição que não existe, o Java lança em tempo de execução a exceção <em class="term">ArrayIndexOutOfBoundsException</em>.</p>
+      <p>Uma <strong>exceção</strong> indica um problema que ocorre durante a execução. O tratamento permite que o programa continue rodando em vez de travar.</p>
+      <h3>Estrutura try / catch</h3>
+      <pre><span class="kw">try</span> {
+    <span class="cmt">// código que PODE lançar exceção</span>
+    ++frequency[responses[answer]];
+}
+<span class="kw">catch</span> (ArrayIndexOutOfBoundsException e) {
+    <span class="cmt">// código que TRATA a exceção se ela ocorrer</span>
+    System.out.println(e);
+}</pre>
+      <ul>
+        <li>O bloco <code>try</code> envolve o código de risco.</li>
+        <li>O bloco <code>catch</code> captura e trata o erro; declara um parâmetro (<code>e</code>) do tipo da exceção.</li>
+        <li>Se nada der errado no <code>try</code>, o <code>catch</code> é <strong>ignorado</strong>.</li>
+        <li>Pode haver vários <code>catch</code> para tipos diferentes de exceção.</li>
+      </ul>
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>A validade do índice é verificada <strong>em tempo de execução</strong>, não de compilação. Um índice inválido só estoura quando o programa roda.</p>
+      </div>
+    </section>
+
+    <section id="r1-s4">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Passando arrays para métodos</h2></div>
+      <p class="lead">Em Java, <strong>todos os argumentos são passados por valor</strong>. Mas o comportamento parece diferente entre tipos primitivos e arrays — e essa diferença é um tópico favorito de prova.</p>
+      <table>
+        <tr><th>O que você passa</th><th>O que o método recebe</th><th>Altera o original?</th></tr>
+        <tr><td>Array inteiro</td><td>Cópia da <strong>referência</strong></td><td><strong>Sim</strong> — aponta pro mesmo objeto</td></tr>
+        <tr><td>Elemento primitivo (<code>array[3]</code>)</td><td>Cópia do <strong>valor</strong></td><td><strong>Não</strong> — mexe só na cópia local</td></tr>
+      </table>
+      <div class="exam">
+        <span class="tag">Por que isso acontece</span>
+        <p>Ao passar o array, copia-se a <strong>referência</strong> — dois nomes apontando para o mesmo objeto. Mudanças aparecem nos dois lados. Ao passar <code>array[3]</code> (um int), copia-se só o <strong>valor</strong>; a variável local morre quando o método termina e o original fica intacto.</p>
+      </div>
+      <p>Para passar um array como argumento, use só o nome, sem colchetes: <code>modifyArray(temperaturas);</code>. O cabeçalho do método declara o parâmetro como array: <code>void modifyArray(double[] b)</code>.</p>
+    </section>
+
+    <section id="r1-s5">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Matrizes (arrays multidimensionais)</h2></div>
+      <p class="lead">Uma <em class="term">matriz</em> é um array com mais de uma dimensão. A bidimensional (2D) organiza dados em <strong>linhas e colunas</strong>, como uma tabela. Precisa de <strong>dois índices</strong>: <code>a[linha][coluna]</code>.</p>
+      <h3>Declaração e inicialização</h3>
+      <pre><span class="cmt">// criação com new: 3 linhas x 4 colunas</span>
+<span class="kw">int</span>[][] b = <span class="kw">new int</span>[<span class="num">3</span>][<span class="num">4</span>];
+
+<span class="cmt">// inicialização direta (valores agrupados por linha)</span>
+<span class="kw">int</span>[][] b = {{<span class="num">1</span>, <span class="num">2</span>}, {<span class="num">3</span>, <span class="num">4</span>}};</pre>
+      <h3>Percorrendo: for aninhado</h3>
+      <p>O <code>for</code> externo controla as <strong>linhas</strong>; o interno, as <strong>colunas</strong>. Repare que <code>array.length</code> dá o número de linhas e <code>array[linha].length</code> dá o número de colunas daquela linha.</p>
+      <pre><span class="kw">for</span> (<span class="kw">int</span> linha = <span class="num">0</span>; linha &lt; array.length; linha++) {
+    <span class="kw">for</span> (<span class="kw">int</span> col = <span class="num">0</span>; col &lt; array[linha].length; col++)
+        System.out.printf(<span class="str">"%d "</span>, array[linha][col]);
+}</pre>
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>No Java, uma matriz é na verdade um <strong>array de arrays</strong>. Por isso as linhas <strong>podem ter comprimentos diferentes</strong> (matriz irregular / "jagged"). Ex: <code>{{1, 2}, {3, 4, 5}}</code> — a linha 0 tem 2 colunas, a linha 1 tem 3.</p>
+      </div>
+    </section>
+
+    <section id="r1-s6">
+      <div class="sec-head"><span class="sec-num">06</span><h2>Classe <code>Arrays</code></h2></div>
+      <p class="lead">A classe <code>java.util.Arrays</code> fornece métodos <code>static</code> prontos para operações comuns, evitando "reinventar a roda".</p>
+      <table>
+        <tr><th>Método</th><th>O que faz</th></tr>
+        <tr><td><code>sort</code></td><td>Ordena o array (ordem crescente por padrão)</td></tr>
+        <tr><td><code>binarySearch</code></td><td>Procura um valor num array <strong>já ordenado</strong>; devolve o índice</td></tr>
+        <tr><td><code>equals</code></td><td>Compara se dois arrays têm os mesmos elementos na mesma ordem</td></tr>
+        <tr><td><code>fill</code></td><td>Preenche o array com um mesmo valor</td></tr>
+      </table>
+      <div class="exam">
+        <span class="tag">Duas pegadinhas juntas</span>
+        <p>1) <code>binarySearch</code> só funciona corretamente em array <strong>ordenado</strong> — passar um desordenado dá resultado indefinido.<br>
+        2) Para comparar conteúdo use <code>Arrays.equals(a, b)</code>. Usar <code>a.equals(b)</code> compara se são o <strong>mesmo objeto</strong>, não o conteúdo.</p>
+      </div>
+      <p>Para copiar elementos entre arrays existe também <code>System.arraycopy(origem, iníc, destino, iníc, qtd)</code>.</p>
+    </section>
+
+    <section id="r1-s7">
+      <div class="sec-head"><span class="sec-num">07</span><h2>ArrayList — o array dinâmico</h2></div>
+      <p class="lead">O <em class="term">ArrayList</em> (pacote <code>java.util</code>) resolve a maior limitação do array: o tamanho fixo. Ele <strong>cresce dinamicamente</strong> conforme você adiciona elementos.</p>
+      <div class="exam">
+        <span class="tag">O número que cai na prova</span>
+        <p>Quando o ArrayList enche, ele cria um array interno maior e copia tudo. O crescimento é de <strong>50%</strong> do tamanho atual. Por baixo dos panos, ele é implementado com um array comum.</p>
+      </div>
+      <h3>Declaração (classe genérica)</h3>
+      <p>O <code>&lt;T&gt;</code> é um espaço reservado: você troca pelo tipo dos elementos. Só aceita <strong>tipos não primitivos</strong> (objetos) — por isso usa-se <code>Integer</code>, não <code>int</code> (o Java faz o "boxing" automático).</p>
+      <pre><span class="kw">import</span> java.util.ArrayList;
+
+ArrayList&lt;String&gt; lista = <span class="kw">new</span> ArrayList&lt;&gt;();
+ArrayList&lt;Integer&gt; numeros = <span class="kw">new</span> ArrayList&lt;&gt;();</pre>
+      <h3>Métodos principais</h3>
+      <table>
+        <tr><th>Método</th><th>O que faz</th></tr>
+        <tr><td><code>add(elem)</code></td><td>Adiciona no <strong>final</strong> da lista</td></tr>
+        <tr><td><code>get(índice)</code></td><td>Retorna o elemento naquela posição</td></tr>
+        <tr><td><code>remove(índice)</code></td><td>Remove o elemento da posição indicada</td></tr>
+        <tr><td><code>size()</code></td><td>Número de elementos (equivale ao <code>.length</code> do array)</td></tr>
+        <tr><td><code>contains(elem)</code></td><td><code>true</code> se o elemento existe na lista</td></tr>
+        <tr><td><code>indexOf(elem)</code></td><td>Índice da primeira ocorrência do elemento</td></tr>
+        <tr><td><code>clear()</code></td><td>Remove todos os elementos</td></tr>
+      </table>
+      <div class="exam">
+        <span class="tag">Cai na prova — reindexação</span>
+        <p>Ao remover por índice, <strong>todos os elementos seguintes andam uma posição pra trás</strong>. Se você remove o índice 0, o que era índice 1 vira 0, o 2 vira 1, e assim por diante. No exemplo da videoaula: removeu-se o "John" (índice 0), e depois <code>get(2)</code> passou a devolver o "Ringo", porque as posições se deslocaram.</p>
+      </div>
+      <h3>Array vs. ArrayList — o resumão</h3>
+      <table>
+        <tr><th>Aspecto</th><th>Array</th><th>ArrayList</th></tr>
+        <tr><td>Tamanho</td><td>Fixo</td><td>Dinâmico (cresce 50%)</td></tr>
+        <tr><td>Tipos</td><td>Primitivos ou objetos</td><td>Só objetos (<code>Integer</code>)</td></tr>
+        <tr><td>Tamanho atual</td><td><code>.length</code></td><td><code>.size()</code></td></tr>
+        <tr><td>Adicionar</td><td><code>array[i] = x</code></td><td><code>.add(x)</code></td></tr>
+        <tr><td>Acessar</td><td><code>array[i]</code></td><td><code>.get(i)</code></td></tr>
+      </table>
+    </section>
+
+    <section id="r1-flash">
+      <div class="sec-head"><span class="sec-num">★</span><h2>Flashcards</h2></div>
+      <p class="fc-intro">Leia a pergunta, tente responder de cabeça, e só então clique para revelar. Se errar, use o botão para voltar à teoria.</p>
+      <div class="fc-controls">
+        <button class="fc-btn" onclick="toggleAll(true)">Abrir todos</button>
+        <button class="fc-btn" onclick="toggleAll(false)">Fechar todos</button>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Por que um array é chamado de estrutura "homogênea"?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Porque armazena valores de <strong>um único tipo de dado</strong>. Todos os elementos são int, ou todos String, etc. — nunca uma mistura.<br><a class="goto" href="#r1-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Fundamentos</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Um array tem 12 elementos. Qual é o índice do primeiro e do último?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Primeiro: <code>0</code>. Último: <code>11</code>. O índice mais alto é sempre o número de elementos <strong>menos 1</strong>.<br><a class="goto" href="#r1-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Fundamentos</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Quais os valores padrão de um array de <code>int</code>, de <code>boolean</code> e de <code>String</code> recém-criado?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>int</code> → <code>0</code> · <code>boolean</code> → <code>false</code> · <code>String</code> (e objetos) → <code>null</code>.<br><a class="goto" href="#r1-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Fundamentos</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual a diferença entre <code>.length</code>, <code>.length()</code> e <code>.size()</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>.length</code> (sem parênteses) → tamanho de <strong>array</strong>. <code>.length()</code> (com parênteses) → tamanho de <strong>String</strong>. <code>.size()</code> → tamanho de <strong>ArrayList</strong>.<br><a class="goto" href="#r1-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Vetores</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual a limitação do <code>for</code> aprimorado (for-each)?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Ele só <strong>lê</strong> os elementos — não pode modificá-los e não dá acesso ao índice. Para modificar ou usar o índice, use o <code>for</code> tradicional com contador.<br><a class="goto" href="#r1-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Vetores</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Que exceção o Java lança ao acessar posição inexistente? Em tempo de compilação ou execução?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>ArrayIndexOutOfBoundsException</code>, lançada em <strong>tempo de execução</strong> (não de compilação).<br><a class="goto" href="#r1-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Tratamento de exceções</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>No try/catch, o que acontece com o <code>catch</code> se nenhum erro ocorrer no <code>try</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Ele é <strong>ignorado</strong>. O <code>catch</code> só executa quando uma exceção do tipo declarado é lançada dentro do <code>try</code>.<br><a class="goto" href="#r1-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Tratamento de exceções</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Java passa argumentos por valor ou por referência?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Sempre por valor.</strong> Mas ao passar um array, o "valor" copiado é a <strong>referência</strong> — então o método mexe no mesmo objeto e as alterações persistem. Ao passar um primitivo, copia-se o valor e o original não muda.<br><a class="goto" href="#r1-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Métodos</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Numa matriz, o que <code>array.length</code> e <code>array[linha].length</code> retornam?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>array.length</code> → número de <strong>linhas</strong>. <code>array[linha].length</code> → número de <strong>colunas</strong> daquela linha específica.<br><a class="goto" href="#r1-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Matrizes</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Por que uma matriz em Java pode ter linhas de comprimentos diferentes?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Porque uma matriz é internamente um <strong>array de arrays</strong>. Cada linha é um array independente, então pode ter tamanho próprio (matriz irregular / jagged).<br><a class="goto" href="#r1-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Matrizes</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual pré-condição o <code>Arrays.binarySearch</code> exige para funcionar?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">O array precisa estar <strong>ordenado</strong>. Buscar num array desordenado devolve resultado indefinido.<br><a class="goto" href="#r1-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Classe Arrays</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Para comparar o conteúdo de dois arrays, uso <code>a.equals(b)</code> ou <code>Arrays.equals(a, b)</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>Arrays.equals(a, b)</code>. O <code>a.equals(b)</code> só verifica se são o <strong>mesmo objeto</strong> na memória, não se têm o mesmo conteúdo.<br><a class="goto" href="#r1-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Classe Arrays</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual a principal vantagem do ArrayList sobre o array? Quanto ele cresce quando enche?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Ele é <strong>dinâmico</strong>: aumenta sozinho conforme se adicionam elementos. Quando enche, cresce <strong>50%</strong> do tamanho atual (criando um array interno maior e copiando tudo).<br><a class="goto" href="#r1-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · ArrayList</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Por que <code>ArrayList&lt;int&gt;</code> não compila, mas <code>ArrayList&lt;Integer&gt;</code> sim?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Classes genéricas só aceitam <strong>tipos por referência</strong> (objetos), não primitivos. Usa-se <code>Integer</code> (a versão objeto de <code>int</code>). O Java empacota o valor automaticamente — é o <em>boxing</em>.<br><a class="goto" href="#r1-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · ArrayList</a></div>
+      </div>
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Tenho a lista [A, B, C, D]. Faço <code>remove(0)</code>. O que <code>get(2)</code> devolve agora?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Devolve <strong>D</strong>. Ao remover o índice 0 (A), todos andam pra trás: B→0, C→1, D→2. Essa <strong>reindexação</strong> é o ponto mais cobrado sobre ArrayList.<br><a class="goto" href="#r1-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · ArrayList</a></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="roteiro" id="roteiro-2">
+    <div class="placeholder">
+      <div class="big">○</div>
+      <h2>Roteiro 02 ainda não adicionado</h2>
+      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
+      <p>É só dizer: <code>adiciona o roteiro 2</code> junto com o PDF, link ou transcrição.</p>
+    </div>
+  </div>
+
+  <div class="roteiro" id="roteiro-3">
+    <div class="placeholder">
+      <div class="big">○</div>
+      <h2>Roteiro 03 ainda não adicionado</h2>
+      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
+      <p>É só dizer: <code>adiciona o roteiro 3</code> junto com o PDF, link ou transcrição.</p>
+    </div>
+  </div>
+
+  <div class="roteiro" id="roteiro-4">
+    <div class="placeholder">
+      <div class="big">○</div>
+      <h2>Roteiro 04 ainda não adicionado</h2>
+      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
+      <p>É só dizer: <code>adiciona o roteiro 4</code> junto com o PDF, link ou transcrição.</p>
+    </div>
+  </div>
+
+  <div class="roteiro" id="roteiro-5">
+    <div class="placeholder">
+      <div class="big">○</div>
+      <h2>Roteiro 05 ainda não adicionado</h2>
+      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
+      <p>É só dizer: <code>adiciona o roteiro 5</code> junto com o PDF, link ou transcrição.</p>
+    </div>
+  </div>
+
+  <div class="roteiro" id="roteiro-6">
+    <div class="placeholder">
+      <div class="big">○</div>
+      <h2>Roteiro 06 ainda não adicionado</h2>
+      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
+      <p>É só dizer: <code>adiciona o roteiro 6</code> junto com o PDF, link ou transcrição.</p>
+    </div>
+  </div>
+
+  <footer>
+    Fontes do roteiro 01: material "Introdução a Arrays" (Prof. Dr. Juliano Varella de Carvalho) · Deitel &amp; Deitel, "Java: Como Programar", 10ª ed., Cap. 7 · videoaula sobre ArrayList (transcrição).<br>
+    Material de estudo pessoal — não substitui a leitura dos roteiros originais.
+  </footer>
+
+</div>
+
+<script>
+  // Alterna entre abas de roteiro
+  function showRoteiro(id, btn) {
+    document.querySelectorAll('.roteiro').forEach(function(r){ r.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    var panel = document.getElementById(id);
+    if (panel) panel.classList.add('active');
+    if (btn) btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  // Abre/fecha todos os flashcards do roteiro ativo
+  function toggleAll(open) {
+    var active = document.querySelector('.roteiro.active');
+    if (!active) return;
+    active.querySelectorAll('.flashcard').forEach(function(c){ c.classList.toggle('open', open); });
+  }
+  // Ativa a primeira aba ao carregar
+  document.addEventListener('DOMContentLoaded', function(){
+    var first = document.querySelector('.tab');
+    var firstPanel = document.querySelector('.roteiro');
+    if (first) first.classList.add('active');
+    if (firstPanel) firstPanel.classList.add('active');
+  });
+</script>
+</body>
+</html>
