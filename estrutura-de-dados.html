@@ -224,8 +224,8 @@
   <div class="tabbar" id="tabbar">
     <button class="tab" onclick="showRoteiro('roteiro-1', this)">01 · Arrays e ArrayList</button>
     <button class="tab" onclick="showRoteiro('roteiro-2', this)">02 · Listas Encadeadas</button>
-    <button class="tab empty" onclick="showRoteiro('roteiro-3', this)">03 · (a definir)</button>
-    <button class="tab empty" onclick="showRoteiro('roteiro-4', this)">04 · (a definir)</button>
+    <button class="tab" onclick="showRoteiro('roteiro-3', this)">03 · Pilhas e Filas</button>
+    <button class="tab" onclick="showRoteiro('roteiro-4', this)">04 · Recursividade e Busca</button>
     <button class="tab empty" onclick="showRoteiro('roteiro-5', this)">05 · (a definir)</button>
     <button class="tab empty" onclick="showRoteiro('roteiro-6', this)">06 · (a definir)</button>
   </div>
@@ -993,21 +993,776 @@ Aluno AlunoAux = <span class="kw">this</span>.getCauda();
   </div>
 
   <div class="roteiro" id="roteiro-3">
-    <div class="placeholder">
-      <div class="big">○</div>
-      <h2>Roteiro 03 ainda não adicionado</h2>
-      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
-      <p>É só dizer: <code>adiciona o roteiro 3</code> junto com o PDF, link ou transcrição.</p>
-    </div>
+    <h2 class="roteiro-title">Pilhas e Filas (sequenciais)</h2>
+    <p class="roteiro-lead">Resumo condensado das fontes do roteiro (slides "Pilha (Stack)" e "Fila (Queue)" do Prof. Juliano Varella de Carvalho, código-fonte Java fornecido e as duas videoaulas), seguido de flashcards.</p>
+
+    <nav class="secnav">
+      <a href="#r3-s1">1 · Pilha: LIFO</a>
+      <a href="#r3-s2">2 · Pilha sequencial</a>
+      <a href="#r3-s3">3 · push e pop</a>
+      <a href="#r3-s4">4 · Fila: FIFO</a>
+      <a href="#r3-s5">5 · Fila sequencial</a>
+      <a href="#r3-s6">6 · Enfileirar/desenfileirar</a>
+      <a href="#r3-s7">7 · Pilha × Fila</a>
+      <a href="#r3-flash">★ Flashcards</a>
+    </nav>
+
+    <section id="r3-s1">
+      <div class="sec-head"><span class="sec-num">01</span><h2>Pilha: a estrutura LIFO</h2></div>
+      <p class="lead">A <em class="term">pilha</em> é a estrutura em que só se mexe por <strong>uma ponta</strong>: o <strong>topo</strong>. Insere no topo, remove do topo.</p>
+
+      <h3>LIFO e FILO — os dois nomes da mesma regra</h3>
+      <ul>
+        <li><strong>LIFO</strong> (<em>Last In, First Out</em>): o <strong>último a entrar é o primeiro a sair</strong>.</li>
+        <li><strong>FILO</strong> (<em>First In, Last Out</em>): o <strong>primeiro a entrar é o último a sair</strong>.</li>
+      </ul>
+      <p>A analogia do material: livros empilhados numa caixa de mudança. O primeiro livro colocado fica no fundo e só sai por último; o último colocado é o primeiro a ser retirado.</p>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>LIFO e FILO <strong>não são estruturas diferentes</strong> — são duas formas de descrever a mesma pilha, uma olhando pela entrada e outra pela saída. Questão de múltipla escolha adora oferecer as duas siglas como se fossem opostas.</p>
+      </div>
+
+      <h3>Onde a pilha aparece na prática</h3>
+      <ul>
+        <li>Análise de <strong>expressões matemáticas</strong> (parênteses balanceados, notação pós-fixa).</li>
+        <li><strong>Análise sintática</strong> em compiladores.</li>
+        <li><strong>Pilha de execução</strong> (<em>call stack</em>) dos programas — cada método só enxerga as variáveis locais que estão no topo.</li>
+        <li>Operações de <strong>desfazer/refazer</strong> (undo/redo).</li>
+      </ul>
+      <p>Uma pilha pode ser implementada com <strong>vetor</strong> (alocação estática, é o caso deste roteiro) ou <strong>encadeada</strong> (alocação dinâmica, como no roteiro 02).</p>
+    </section>
+
+    <section id="r3-s2">
+      <div class="sec-head"><span class="sec-num">02</span><h2>Pilha sequencial: os dois atributos</h2></div>
+      <p class="lead">Na versão sequencial, a classe <code>Pilha</code> guarda apenas <strong>um vetor</strong> e <strong>um inteiro</strong>.</p>
+
+      <table>
+        <tr><th>Atributo</th><th>Função</th></tr>
+        <tr><td><code>pilha[]</code></td><td>Vetor que armazena os elementos empilhados</td></tr>
+        <tr><td><code>topo</code></td><td>Inteiro com a <strong>posição que receberá o próximo</strong> elemento</td></tr>
+      </table>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>O <code>topo</code> aponta para a <strong>próxima posição livre</strong>, não para o último elemento. Por isso o elemento que está no topo da pilha fica em <code>pilha[topo - 1]</code>. Errar esse "−1" é o erro número um deste roteiro.</p>
+      </div>
+
+      <h3>Os dois estados-limite</h3>
+      <ul>
+        <li><strong>Pilha vazia:</strong> <code>topo == 0</code>.</li>
+        <li><strong>Pilha cheia:</strong> <code>topo == tamanho máximo</code> do vetor.</li>
+      </ul>
+
+      <pre><span class="kw">public class</span> Pilha {
+    <span class="kw">private int</span> topo;
+    <span class="kw">private</span> Carta pilha[];
+
+    <span class="kw">public</span> Pilha(<span class="kw">int</span> tamanho) {
+        <span class="kw">this</span>.topo = <span class="num">0</span>;                     <span class="cmt">// pilha nasce vazia</span>
+        <span class="kw">this</span>.pilha = <span class="kw">new</span> Carta[tamanho];  <span class="cmt">// capacidade fixa</span>
+    }
+}</pre>
+      <p>No exemplo do roteiro, a pilha guarda objetos <code>Carta</code> (número de 1 a 13 + naipe: <code>C</code> copas, <code>O</code> ouros, <code>E</code> espadas, <code>F</code> flores) — o cenário é uma pilha de cartas de baralho, como no jogo Paciência.</p>
+
+      <h3>Operações previstas</h3>
+      <ul>
+        <li>Criar a pilha vazia (construtor)</li>
+        <li><code>push()</code> — inserir no topo (empilhar)</li>
+        <li><code>pop()</code> — remover do topo (desempilhar)</li>
+        <li>Buscar o elemento do topo</li>
+        <li>Verificar se a pilha está vazia</li>
+      </ul>
+    </section>
+
+    <section id="r3-s3">
+      <div class="sec-head"><span class="sec-num">03</span><h2>push() e pop()</h2></div>
+      <p class="lead">As duas operações que definem a pilha. Ambas devolvem um sinal de sucesso/fracasso em vez de quebrar o programa.</p>
+
+      <h3>push() — empilhar</h3>
+      <pre><span class="kw">public boolean</span> push(<span class="kw">int</span> numero, String naipe) {
+    <span class="kw">if</span> (<span class="kw">this</span>.getTopo() &lt; <span class="kw">this</span>.pilha.length) {   <span class="cmt">// tem espaço?</span>
+        Carta novo = <span class="kw">new</span> Carta(numero, naipe);
+        <span class="kw">this</span>.pilha[<span class="kw">this</span>.getTopo()] = novo;         <span class="cmt">// grava NA posição topo</span>
+        <span class="kw">this</span>.topo++;                              <span class="cmt">// e só então avança</span>
+        <span class="kw">return true</span>;
+    }
+    <span class="kw">else</span>
+        <span class="kw">return false</span>;                             <span class="cmt">// pilha cheia</span>
+}</pre>
+      <p>A ordem é sempre <strong>grava e depois incrementa</strong>. O retorno <code>boolean</code> permite que quem chamou avise o usuário — é o que o <code>App.java</code> faz com a mensagem "A pilha atingiu o limite".</p>
+
+      <h3>pop() — desempilhar</h3>
+      <pre><span class="kw">public</span> Carta pop() {
+    <span class="kw">if</span> (<span class="kw">this</span>.getTopo() != <span class="num">0</span>) {                    <span class="cmt">// pilha não está vazia?</span>
+        Carta nodoTopo = <span class="kw">new</span> Carta(<span class="kw">this</span>.pilha[<span class="kw">this</span>.topo<span class="num">-1</span>]);
+        <span class="kw">this</span>.setTopo(<span class="kw">this</span>.getTopo()<span class="num">-1</span>);           <span class="cmt">// decrementa o topo</span>
+        <span class="kw">return</span> nodoTopo;                          <span class="cmt">// devolve quem saiu</span>
+    }
+    <span class="kw">else</span>
+        <span class="kw">return null</span>;                              <span class="cmt">// pilha vazia</span>
+}</pre>
+
+      <div class="exam">
+        <span class="tag">Por que isso acontece</span>
+        <p>O <code>pop()</code> <strong>não apaga nada do vetor</strong> — ele só recua o <code>topo</code> em uma unidade. O dado antigo continua fisicamente na memória, mas passa a ser inalcançável e será <strong>sobrescrito no próximo <code>push()</code></strong>. Remover, numa pilha sequencial, é mover um índice.</p>
+      </div>
+
+      <h3>Impressão: do topo para a base</h3>
+      <pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="kw">this</span>.getTopo()<span class="num">-1</span>; i &gt;= <span class="num">0</span>; i--)
+    System.out.print(pilha[i].getNumero() + <span class="str">": "</span> + pilha[i].getNaipe() + <span class="str">" -&gt; "</span>);</pre>
+      <p>O laço é <strong>decrescente</strong>, começando em <code>topo-1</code>. Por isso a saída aparece na ordem inversa da inserção.</p>
+
+      <h3>Rastreando o exemplo do roteiro</h3>
+      <pre><span class="cmt">// pilha com capacidade 4</span>
+push(<span class="num">5</span>,<span class="str">"C"</span>); push(<span class="num">8</span>,<span class="str">"E"</span>); push(<span class="num">9</span>,<span class="str">"O"</span>); push(<span class="num">2</span>,<span class="str">"F"</span>);
+push(<span class="num">3</span>,<span class="str">"C"</span>);  <span class="cmt">// retorna false -&gt; "A pilha atingiu o limite."</span>
+
+<span class="cmt">// impressão (topo -&gt; base): 2:F -&gt; 9:O -&gt; 8:E -&gt; 5:C</span>
+pop();     <span class="cmt">// remove o 2 de flores; novo topo passa a ser o 9:O</span></pre>
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>A primeira carta empilhada (<code>5:C</code>) fica na <strong>base</strong> e só sairia por último — LIFO na prática. E o quinto <code>push()</code> <strong>falha silenciosamente</strong> se ninguém testar o retorno: o método devolve <code>false</code>, não lança exceção.</p>
+      </div>
+    </section>
+
+    <section id="r3-s4">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Fila: a estrutura FIFO</h2></div>
+      <p class="lead">A <em class="term">fila</em> mexe pelas <strong>duas pontas</strong>: entra pelo <strong>fim</strong>, sai pelo <strong>início</strong>. É a fila do refeitório, literalmente.</p>
+
+      <ul>
+        <li><strong>FIFO</strong> (<em>First In, First Out</em>): o <strong>primeiro a entrar é o primeiro a sair</strong>.</li>
+        <li>Toda informação que <strong>chega</strong> é inserida no <strong>final</strong> da fila.</li>
+        <li>Toda informação que <strong>sai</strong> (é consumida) é removida do <strong>início</strong>.</li>
+      </ul>
+
+      <h3>Onde a fila aparece na prática</h3>
+      <ul>
+        <li><strong>Impressora</strong> organizando documentos na ordem de envio.</li>
+        <li>Consumo de <strong>processos de comunicação</strong> em redes.</li>
+        <li><strong>Sistema operacional</strong> atendendo processos requisitados.</li>
+      </ul>
+      <p>Como a pilha, a fila pode ser sequencial (vetor) ou encadeada. Este roteiro trata da <strong>sequencial</strong>.</p>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>A diferença prática entre as duas estruturas: na <strong>pilha</strong> a ordem de saída é o <strong>inverso</strong> da ordem de entrada; na <strong>fila</strong>, a ordem de saída é <strong>a mesma</strong> da entrada.</p>
+      </div>
+    </section>
+
+    <section id="r3-s5">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Fila sequencial: os três atributos</h2></div>
+      <p class="lead">A fila precisa controlar <strong>duas pontas</strong>, então tem um atributo a mais que a pilha.</p>
+
+      <table>
+        <tr><th>Atributo</th><th>Função</th></tr>
+        <tr><td><code>fila[]</code></td><td>Vetor que armazena os elementos enfileirados</td></tr>
+        <tr><td><code>inicio</code></td><td>Posição do <strong>primeiro</strong> elemento (de onde sai)</td></tr>
+        <tr><td><code>fim</code></td><td>Posição que receberá o <strong>próximo</strong> elemento (onde entra)</td></tr>
+      </table>
+
+      <pre><span class="kw">public</span> Fila(<span class="kw">int</span> tamanho) {
+    <span class="kw">this</span>.inicio = <span class="num">0</span>;
+    <span class="kw">this</span>.fim = <span class="num">0</span>;
+    <span class="kw">this</span>.fila = <span class="kw">new</span> Aluno[tamanho];
+}
+
+<span class="kw">public boolean</span> filaVazia() { <span class="kw">return</span> (inicio == <span class="num">0</span> &amp;&amp; fim == <span class="num">0</span>); }
+<span class="kw">public boolean</span> filaCheia() { <span class="kw">return</span> (fim &gt;= fila.length); }</pre>
+
+      <p>No exemplo do roteiro a fila guarda objetos <code>Aluno</code> (matrícula + nome) e representa a <strong>fila da lancheria</strong> de uma escola: o aluno chega no fim e é atendido pelo início.</p>
+
+      <h3>Operações previstas</h3>
+      <ul>
+        <li>Criar a fila vazia (construtor)</li>
+        <li><code>enfileirar()</code> — inserir no final</li>
+        <li><code>desenfileirar()</code> — remover do início (consumir a fila)</li>
+        <li>Verificar se está vazia · verificar se está cheia · imprimir</li>
+      </ul>
+    </section>
+
+    <section id="r3-s6">
+      <div class="sec-head"><span class="sec-num">06</span><h2>enfileirar(), desenfileirar() e o problema da fila que anda</h2></div>
+      <p class="lead">Enfileirar é simples. Desenfileirar tem <strong>duas estratégias</strong> — e a mais óbvia esconde um defeito grave que o roteiro faz questão de mostrar.</p>
+
+      <h3>enfileirar() — entra pelo fim</h3>
+      <pre><span class="kw">public boolean</span> enfileirar(<span class="kw">int</span> valor, String nome) {
+    <span class="kw">if</span> (<span class="kw">this</span>.inicio &gt;= <span class="num">0</span> &amp;&amp; !<span class="kw">this</span>.filaCheia()) {
+        Aluno novo = <span class="kw">new</span> Aluno(valor, nome);
+        <span class="kw">this</span>.fila[<span class="kw">this</span>.fim] = novo;   <span class="cmt">// grava NA posição fim</span>
+        <span class="kw">this</span>.fim++;                   <span class="cmt">// e depois avança</span>
+        <span class="kw">return true</span>;
+    }
+    <span class="kw">else</span>
+        <span class="kw">return false</span>;                <span class="cmt">// fila cheia</span>
+}</pre>
+      <p>Mesmo padrão do <code>push()</code>: grava, depois incrementa o índice.</p>
+
+      <h3>Estratégia 1 — só avançar o início (a que tem problema)</h3>
+      <pre><span class="cmt">// versão que aparece COMENTADA no código do roteiro</span>
+<span class="kw">public</span> Aluno desenfileirar() {
+    <span class="kw">if</span> (<span class="kw">this</span>.inicio &gt;= <span class="num">0</span> &amp;&amp; <span class="kw">this</span>.inicio &lt; <span class="kw">this</span>.fila.length) {
+        Aluno removido = <span class="kw">new</span> Aluno(<span class="kw">this</span>.fila[<span class="kw">this</span>.inicio]);
+        <span class="kw">this</span>.inicio++;   <span class="cmt">// "remove" apenas empurrando o início</span>
+        <span class="kw">return</span> removido;
+    }
+    <span class="kw">else return null</span>;
+}</pre>
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>Esse é <strong>o defeito central do roteiro</strong>. O <code>inicio</code> só anda para frente e o <code>fim</code> nunca recua, então a fila vai <strong>encolhendo</strong> a cada atendimento. Depois de esvaziar uma fila de capacidade 4, <code>inicio</code> e <code>fim</code> estão os dois no limite: a fila está <strong>logicamente vazia mas não aceita ninguém</strong> (no exemplo, o aluno Brian não consegue entrar). O professor deixa isso como exercício a resolver.</p>
+      </div>
+
+      <h3>Estratégia 2 — deslocar todo mundo (a que está ativa no código)</h3>
+      <pre><span class="kw">public</span> Aluno desenfileirar() {
+    <span class="kw">if</span> (<span class="kw">this</span>.fim &gt; <span class="num">0</span>) {
+        Aluno removido = <span class="kw">new</span> Aluno(<span class="kw">this</span>.fila[<span class="kw">this</span>.inicio]);
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="kw">this</span>.fim<span class="num">-1</span>; i++)
+            <span class="kw">this</span>.fila[i] = <span class="kw">this</span>.fila[i+<span class="num">1</span>];   <span class="cmt">// todos andam uma casa</span>
+        <span class="kw">this</span>.fim--;                            <span class="cmt">// o fim recua</span>
+        <span class="kw">return</span> removido;
+    }
+    <span class="kw">else return null</span>;
+}</pre>
+      <p>Aqui o elemento da posição 1 sobrescreve o da 0, o da 2 sobrescreve o da 1, e assim por diante. O <code>inicio</code> <strong>fica sempre em 0</strong> e o <code>fim</code> recua — a fila não encolhe e o espaço é reaproveitado.</p>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>A troca é clara: a estratégia 1 remove em <strong>uma instrução</strong> mas desperdiça o vetor; a estratégia 2 <strong>reaproveita todo o espaço</strong>, mas custa um laço que percorre a fila inteira a cada remoção.</p>
+      </div>
+
+      <h3>Rastreando o exemplo do roteiro</h3>
+      <pre><span class="cmt">// fila com capacidade 4</span>
+enfileirar(<span class="num">5</span>,<span class="str">"John"</span>); enfileirar(<span class="num">10</span>,<span class="str">"Paul"</span>);
+enfileirar(<span class="num">15</span>,<span class="str">"George"</span>); enfileirar(<span class="num">20</span>,<span class="str">"Ringo"</span>);
+enfileirar(<span class="num">25</span>,<span class="str">"Pete"</span>);   <span class="cmt">// false -&gt; "A fila atingiu o limite."</span>
+
+<span class="cmt">// impressão: 5:John -&gt; 10:Paul -&gt; 15:George -&gt; 20:Ringo</span>
+desenfileirar();  <span class="cmt">// sai John (o primeiro que entrou)</span></pre>
+      <p>Repare no contraste com a pilha: aqui a impressão sai <strong>na mesma ordem</strong> da inserção, e quem sai primeiro é quem chegou primeiro.</p>
+    </section>
+
+    <section id="r3-s7">
+      <div class="sec-head"><span class="sec-num">07</span><h2>Pilha × Fila lado a lado</h2></div>
+
+      <table>
+        <tr><th>&nbsp;</th><th>Pilha</th><th>Fila</th></tr>
+        <tr><td><strong>Sigla</strong></td><td>LIFO / FILO</td><td>FIFO</td></tr>
+        <tr><td><strong>Pontas usadas</strong></td><td>Uma só (o topo)</td><td>Duas (fim entra, início sai)</td></tr>
+        <tr><td><strong>Atributos de controle</strong></td><td><code>topo</code></td><td><code>inicio</code> e <code>fim</code></td></tr>
+        <tr><td><strong>Inserir</strong></td><td><code>push()</code> — no topo</td><td><code>enfileirar()</code> — no fim</td></tr>
+        <tr><td><strong>Remover</strong></td><td><code>pop()</code> — do topo</td><td><code>desenfileirar()</code> — do início</td></tr>
+        <tr><td><strong>Ordem de saída</strong></td><td>Inversa à entrada</td><td>Igual à entrada</td></tr>
+        <tr><td><strong>Vazia quando</strong></td><td><code>topo == 0</code></td><td><code>inicio == 0 &amp;&amp; fim == 0</code></td></tr>
+        <tr><td><strong>Cheia quando</strong></td><td><code>topo == tamanho</code></td><td><code>fim &gt;= tamanho</code></td></tr>
+        <tr><td><strong>Exemplo do roteiro</strong></td><td>Cartas de baralho</td><td>Alunos na lancheria</td></tr>
+      </table>
+
+      <div class="exam">
+        <span class="tag">Pegadinha comum</span>
+        <p>Nas duas estruturas, o índice de controle marca a <strong>próxima posição a receber</strong>, não a última ocupada. Por isso <code>pop()</code> lê <code>pilha[topo-1]</code>, enquanto <code>desenfileirar()</code> lê <code>fila[inicio]</code> — a assimetria é porque <code>inicio</code> aponta para um elemento existente e <code>topo</code>/<code>fim</code> apontam para o vazio seguinte.</p>
+      </div>
+    </section>
+
+    <section id="r3-flash">
+      <div class="sec-head"><span class="sec-num">★</span><h2>Flashcards</h2></div>
+      <p class="fc-intro">Leia a pergunta, responda de cabeça, e só então clique para revelar.</p>
+      <div class="fc-controls">
+        <button class="fc-btn" onclick="toggleAll(true)">Abrir todos</button>
+        <button class="fc-btn" onclick="toggleAll(false)">Fechar todos</button>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que significam <strong>LIFO</strong> e <strong>FILO</strong>? São estruturas diferentes?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>LIFO</strong> = <em>Last In, First Out</em> (último a entrar, primeiro a sair). <strong>FILO</strong> = <em>First In, Last Out</em> (primeiro a entrar, último a sair). <strong>Não são diferentes</strong> — são a mesma pilha descrita pela entrada ou pela saída.<br><a class="goto" href="#r3-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Pilha: LIFO</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Cite <strong>três aplicações</strong> reais de pilha.</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Análise de <strong>expressões matemáticas</strong>; <strong>análise sintática</strong> em compiladores; <strong>pilha de execução</strong> (call stack) dos programas; operações de <strong>desfazer/refazer</strong>.<br><a class="goto" href="#r3-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Pilha: LIFO</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Quais os <strong>dois atributos</strong> de uma pilha sequencial? Para o que exatamente aponta o <code>topo</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Um <strong>vetor</strong> (<code>pilha[]</code>) e um <strong>inteiro</strong> <code>topo</code>. O <code>topo</code> indica a posição que <strong>receberá o próximo</strong> elemento — ou seja, a próxima posição <strong>livre</strong>, não o último ocupado.<br><a class="goto" href="#r3-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Pilha sequencial</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Em que posição do vetor está o elemento que está <strong>no topo</strong> da pilha? Quando ela está vazia e cheia?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Em <code>pilha[topo - 1]</code> — por isso o <code>pop()</code> usa esse índice. <strong>Vazia:</strong> <code>topo == 0</code>. <strong>Cheia:</strong> <code>topo == tamanho</code> do vetor.<br><a class="goto" href="#r3-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Pilha sequencial</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual a ordem das instruções dentro do <code>push()</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Testa se há espaço (<code>topo &lt; length</code>) → <strong>grava</strong> em <code>pilha[topo]</code> → <strong>depois</strong> incrementa o <code>topo</code> → retorna <code>true</code>. Se a pilha estiver cheia, retorna <code>false</code> sem inserir.<br><a class="goto" href="#r3-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · push e pop</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O <code>pop()</code> <strong>apaga</strong> o elemento do vetor?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Não.</strong> Ele só decrementa o <code>topo</code>. O dado continua fisicamente na memória, mas fica inalcançável e será <strong>sobrescrito no próximo <code>push()</code></strong>.<br><a class="goto" href="#r3-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · push e pop</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que <code>push()</code> e <code>pop()</code> retornam quando a pilha está cheia / vazia?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>push()</code> retorna <code>false</code> (pilha cheia) e <code>pop()</code> retorna <code>null</code> (pilha vazia). <strong>Nenhum dos dois lança exceção</strong> — cabe a quem chamou testar o retorno e avisar o usuário.<br><a class="goto" href="#r3-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · push e pop</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Empilho 5:C, 8:E, 9:O e 2:F numa pilha de capacidade 4. Qual a saída da impressão? Quem sai no <code>pop()</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Impressão do topo para a base: <strong>2:F → 9:O → 8:E → 5:C</strong>. O <code>pop()</code> remove o <strong>2:F</strong> (o último que entrou) e o novo topo passa a ser o 9:O. O 5:C está na <strong>base</strong> e sairia por último.<br><a class="goto" href="#r3-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · push e pop</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que significa <strong>FIFO</strong>? Por qual ponta a fila recebe e por qual ela entrega?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>FIFO</strong> = <em>First In, First Out</em>: o primeiro a entrar é o primeiro a sair. Toda informação que <strong>chega entra pelo fim</strong>; toda informação <strong>consumida sai pelo início</strong>.<br><a class="goto" href="#r3-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Fila: FIFO</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Cite <strong>três aplicações</strong> reais de fila.</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Impressora</strong> imprimindo documentos na ordem de envio; consumo de <strong>processos de comunicação em redes</strong>; <strong>sistema operacional</strong> atendendo processos requisitados.<br><a class="goto" href="#r3-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Fila: FIFO</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Por que a fila sequencial tem <strong>três</strong> atributos e a pilha só <strong>dois</strong>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Porque a fila mexe pelas <strong>duas pontas</strong>: precisa do vetor, do <code>inicio</code> (de onde sai) e do <code>fim</code> (onde entra). A pilha usa <strong>uma ponta só</strong>, então um único índice (<code>topo</code>) resolve.<br><a class="goto" href="#r3-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Fila sequencial</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Como se testa se a fila está <strong>vazia</strong> e se está <strong>cheia</strong>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Vazia:</strong> <code>inicio == 0 &amp;&amp; fim == 0</code>. <strong>Cheia:</strong> <code>fim &gt;= fila.length</code>.<br><a class="goto" href="#r3-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Fila sequencial</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual o <strong>problema</strong> de desenfileirar apenas incrementando o <code>inicio</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">O <code>inicio</code> só anda para frente e o <code>fim</code> nunca recua, então a fila <strong>encolhe a cada atendimento</strong>. Depois de algumas remoções ela fica <strong>logicamente vazia mas incapaz de receber alguém</strong>, porque os índices chegaram ao limite do vetor.<br><a class="goto" href="#r3-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Enfileirar/desenfileirar</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Como a <strong>segunda estratégia</strong> de desenfileirar resolve esse problema? Qual o custo?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Ela <strong>desloca todos os elementos uma posição para trás</strong> (o da 1 sobrescreve o da 0, e assim por diante) e <strong>decrementa o <code>fim</code></strong>. O <code>inicio</code> fica sempre em 0 e o espaço é reaproveitado. <strong>Custo:</strong> um laço que percorre a fila inteira a cada remoção, em vez de uma única instrução.<br><a class="goto" href="#r3-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Enfileirar/desenfileirar</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Enfileiro John, Paul, George e Ringo. Qual a ordem de impressão e quem sai no primeiro <code>desenfileirar()</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Impressão <strong>na mesma ordem da entrada</strong>: John → Paul → George → Ringo. Sai o <strong>John</strong>, que foi o primeiro a chegar. É aqui que a fila se opõe à pilha, onde a saída viria invertida.<br><a class="goto" href="#r3-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Enfileirar/desenfileirar</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Resuma a diferença entre pilha e fila em <strong>uma frase</strong> sobre a ordem de saída.</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Na <strong>pilha</strong> a ordem de saída é o <strong>inverso</strong> da ordem de entrada (LIFO); na <strong>fila</strong> a ordem de saída é <strong>igual</strong> à de entrada (FIFO).<br><a class="goto" href="#r3-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · Pilha × Fila</a></div>
+      </div>
+    </section>
   </div>
 
   <div class="roteiro" id="roteiro-4">
-    <div class="placeholder">
-      <div class="big">○</div>
-      <h2>Roteiro 04 ainda não adicionado</h2>
-      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
-      <p>É só dizer: <code>adiciona o roteiro 4</code> junto com o PDF, link ou transcrição.</p>
-    </div>
+    <h2 class="roteiro-title">Recursividade e Pesquisa Binária</h2>
+    <p class="roteiro-lead">Resumo condensado das fontes do roteiro (Cap. 18 "Recursão" do Deitel, código-fonte Java fornecido e as quatro videoaulas: pilha de execução, fatorial, Fibonacci e pesquisa binária), seguido de flashcards.</p>
+
+    <nav class="secnav">
+      <a href="#r4-s1">1 · Pilha de execução</a>
+      <a href="#r4-s2">2 · Recursividade</a>
+      <a href="#r4-s3">3 · Fatorial</a>
+      <a href="#r4-s4">4 · Fibonacci</a>
+      <a href="#r4-s5">5 · Recursão × iteração</a>
+      <a href="#r4-s6">6 · Sequencial × binária</a>
+      <a href="#r4-s7">7 · Pesquisa binária</a>
+      <a href="#r4-flash">★ Flashcards</a>
+    </nav>
+
+    <section id="r4-s1">
+      <div class="sec-head"><span class="sec-num">01</span><h2>A pilha de execução (call stack)</h2></div>
+      <p class="lead">Antes de entender recursividade é preciso entender o que acontece na memória quando um método chama outro. Esse controle é feito por uma <strong>pilha</strong> — a mesma estrutura LIFO do roteiro 03.</p>
+
+      <h3>Para que serve a stack</h3>
+      <ul>
+        <li>Guarda <strong>de onde partiu a chamada</strong> do método, para saber para onde voltar quando ele terminar.</li>
+        <li>Guarda o conteúdo das <strong>variáveis locais</strong> de cada método chamado.</li>
+        <li>Cada chamada gera um <em class="term">quadro de pilha</em> (<em>stack frame</em>) empilhado no topo.</li>
+      </ul>
+
+      <h3>Rastreando o exemplo do roteiro</h3>
+      <pre><span class="kw">public static int</span> B(<span class="kw">int</span> x, <span class="kw">int</span> y) { <span class="kw">return</span> x + y; }
+
+<span class="kw">public static int</span> A(<span class="kw">int</span> i, <span class="kw">int</span> j, <span class="kw">int</span> k) {
+    <span class="kw">int</span> x;
+    x = B(i, j);      <span class="cmt">// A fica SUSPENSO esperando B</span>
+    x = x + k;
+    <span class="kw">return</span> x;
+}
+
+<span class="kw">public static void</span> main(String args[]) {
+    <span class="kw">int</span> i = <span class="num">1</span>, j = <span class="num">2</span>, k = <span class="num">3</span>, y;
+    y = A(i, j, k);   <span class="cmt">// main fica SUSPENSO esperando A</span>
+    System.out.println(<span class="str">"y: "</span> + y);   <span class="cmt">// imprime 6</span>
+}</pre>
+
+      <pre><span class="cmt">// evolução da pilha de execução:</span>
+[ main ]  →  [ A ]     →  [ B ]     →  [ A ]      →  [ main ]
+             [ main ]     [ A ]        [ main ]      (fim)
+                          [ main ]
+                          B devolve 3   A devolve 6</pre>
+
+      <p>Sequência: <code>main</code> chama <code>A(1,2,3)</code> e fica suspenso; <code>A</code> chama <code>B(1,2)</code> e fica suspenso; <code>B</code> resolve <code>1+2=3</code> e é <strong>desempilhado</strong>; <code>A</code> então faz <code>3+3=6</code>, retorna e é desempilhado; <code>main</code> imprime <strong>6</strong>.</p>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>As variáveis <code>i</code>, <code>j</code>, <code>k</code> de <code>main</code> e as de <code>A</code> têm os <strong>mesmos nomes mas são porções de memória diferentes</strong>. Cada quadro de pilha tem suas próprias variáveis locais — nomes iguais em métodos diferentes não se comunicam.</p>
+      </div>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>O método <strong>em execução é sempre o do topo</strong> da pilha. Quem está embaixo está suspenso, esperando um retorno. É exatamente esse mecanismo que faz a recursividade funcionar.</p>
+      </div>
+    </section>
+
+    <section id="r4-s2">
+      <div class="sec-head"><span class="sec-num">02</span><h2>Recursividade: caso base e passo recursivo</h2></div>
+      <p class="lead">Um método <em class="term">recursivo</em> é aquele que chama a si mesmo com uma versão <strong>menor</strong> do problema, até chegar a um caso que sabe resolver direto.</p>
+
+      <h3>As duas partes obrigatórias</h3>
+      <ul>
+        <li><strong>Caso base</strong> (ou ponto de parada): o caso mais simples, resolvido <strong>sem</strong> nova chamada. É ele que encerra a recursão.</li>
+        <li><strong>Passo recursivo</strong>: divide o problema em uma parte que o método sabe resolver e outra <strong>parecida com o original, porém menor</strong>, resolvida por uma nova chamada a si mesmo.</li>
+      </ul>
+      <p>É a estratégia de <strong>dividir para conquistar</strong>: cada chamada abre um novo quadro na pilha de execução enquanto a anterior continua suspensa. Ao atingir o caso base, os retornos sobem em cascata até a chamada original.</p>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>Sem caso base — ou com um passo recursivo que <strong>não converge</strong> para ele — a recursão é <strong>infinita</strong>: a pilha de execução cresce até estourar (<code>StackOverflowError</code>). Toda função recursiva precisa das duas partes.</p>
+      </div>
+
+      <h3>Relação de recorrência</h3>
+      <p>Sempre que um problema pode ser escrito em função de si mesmo, existe uma <em class="term">relação de recorrência</em> — e, com ela, um algoritmo recursivo quase pronto:</p>
+      <pre><span class="cmt">// fatorial</span>
+n! = n × (n-1)!        com  1! = 1
+
+<span class="cmt">// Fibonacci</span>
+fib(n) = fib(n-1) + fib(n-2)   com  fib(1) = fib(2) = 1</pre>
+      <p>A relação se transpõe quase literalmente para o código: o caso da definição vira o <code>if</code> do caso base, e a fórmula geral vira o <code>return</code> com a chamada recursiva.</p>
+    </section>
+
+    <section id="r4-s3">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Fatorial</h2></div>
+      <p class="lead">O clássico para aprender recursividade. Por definição, <code>1! = 1</code>, e cada fatorial é o número multiplicado pelo fatorial do antecessor.</p>
+
+      <pre>1! = 1
+2! = 2 × 1! = 2
+3! = 3 × 2! = 6
+4! = 4 × 3! = 24</pre>
+
+      <h3>Versão iterativa</h3>
+      <pre><span class="kw">public static long</span> fatorialIterativo(<span class="kw">int</span> n) {
+    <span class="kw">int</span> i;
+    <span class="kw">long</span> fat = <span class="num">1</span>;
+    <span class="kw">for</span> (i = n; i &gt; <span class="num">1</span>; i--)
+        fat *= i;          <span class="cmt">// acumula n × (n-1) × ... × 2</span>
+    <span class="kw">return</span> fat;
+}</pre>
+
+      <h3>Versão recursiva</h3>
+      <pre><span class="kw">public static long</span> fatorialRecursivo(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n == <span class="num">1</span>)                          <span class="cmt">// CASO BASE</span>
+        <span class="kw">return</span> <span class="num">1</span>;
+    <span class="kw">else</span>
+        <span class="kw">return</span> n * fatorialRecursivo(n<span class="num">-1</span>);  <span class="cmt">// PASSO RECURSIVO</span>
+}</pre>
+
+      <h3>Rastreando <code>fatorialRecursivo(4)</code> na pilha</h3>
+      <pre><span class="cmt">// descida (empilhando):</span>
+fat(4) → 4 * fat(3)
+         fat(3) → 3 * fat(2)
+                  fat(2) → 2 * fat(1)
+                           fat(1) → 1        <span class="cmt">// caso base, para aqui</span>
+
+<span class="cmt">// subida (desempilhando os retornos):</span>
+fat(1) = 1  →  fat(2) = 2*1 = 2  →  fat(3) = 3*2 = 6  →  fat(4) = 4*6 = 24</pre>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>Note que <strong>nenhuma multiplicação é feita na descida</strong>. As chamadas ficam todas suspensas na pilha esperando; só quando o caso base devolve <code>1</code> é que os produtos são calculados, de dentro para fora.</p>
+      </div>
+
+      <p>O retorno é declarado <code>long</code> porque o fatorial cresce muito rápido — <code>int</code> estoura já em valores pequenos de <code>n</code>.</p>
+    </section>
+
+    <section id="r4-s4">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Série de Fibonacci</h2></div>
+      <p class="lead">Série descoberta por Leonardo de Pisa a partir do estudo do crescimento de uma população de coelhos. Os dois primeiros termos valem <strong>1</strong>; cada termo seguinte é a <strong>soma dos dois anteriores</strong>.</p>
+
+      <pre>1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+     ↑  ↑  ↑
+     |  |  fib(3) = fib(1) + fib(2) = 2</pre>
+
+      <p>Curiosidade que o material destaca: dividindo um termo pelo anterior, a razão converge para a <strong>proporção áurea</strong>. A série aparece no mercado financeiro, na teoria dos jogos e em diversas configurações da natureza.</p>
+
+      <h3>Versão iterativa</h3>
+      <pre><span class="kw">public static long</span> fibonacciIterativo(<span class="kw">int</span> n) {
+    <span class="kw">long</span> n_menos_1, n_menos_2, res = <span class="num">0</span>;
+    <span class="kw">if</span> (n == <span class="num">1</span> || n == <span class="num">2</span>)
+        <span class="kw">return</span> <span class="num">1</span>;
+    <span class="kw">else</span> {
+        n_menos_1 = <span class="num">1</span>; n_menos_2 = <span class="num">1</span>;   <span class="cmt">// os dois termos conhecidos</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">3</span>; i &lt;= n; i++) {
+            res = n_menos_1 + n_menos_2;  <span class="cmt">// calcula o termo atual</span>
+            n_menos_1 = n_menos_2;        <span class="cmt">// e desloca a "janela"</span>
+            n_menos_2 = res;
+        }
+        <span class="kw">return</span> res;
+    }
+}</pre>
+      <p>A versão iterativa mantém apenas <strong>duas variáveis auxiliares</strong> com os termos anteriores e vai deslocando essa janela a cada volta do laço.</p>
+
+      <h3>Versão recursiva</h3>
+      <pre><span class="kw">public static long</span> fibonacciRecursivo(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n == <span class="num">1</span> || n == <span class="num">2</span>)              <span class="cmt">// CASO BASE (são DOIS)</span>
+        <span class="kw">return</span> <span class="num">1</span>;
+    <span class="kw">else</span>
+        <span class="kw">return</span> fibonacciRecursivo(n<span class="num">-1</span>) + fibonacciRecursivo(n<span class="num">-2</span>);
+}</pre>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>O Fibonacci recursivo tem <strong>duas chamadas recursivas</strong> no mesmo <code>return</code> — diferente do fatorial, que tem uma só. Isso faz o número de chamadas <strong>explodir exponencialmente</strong>: <code>fib(n-2)</code> é recalculado várias vezes do zero. Por isso o Deitel traz uma dica de desempenho recomendando <strong>evitar recursão no estilo Fibonacci</strong>.</p>
+      </div>
+
+      <div class="exam">
+        <span class="tag">Pegadinha comum</span>
+        <p>O caso base do Fibonacci cobre <strong>dois valores</strong> (<code>n == 1 || n == 2</code>), porque a série precisa de dois termos iniciais conhecidos para poder somar. Escrever só <code>n == 1</code> gera recursão infinita ao chegar em <code>fib(0)</code>.</p>
+      </div>
+    </section>
+
+    <section id="r4-s5">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Recursão × iteração</h2></div>
+      <p class="lead">As duas resolvem os mesmos problemas e ambas repetem, terminam e podem rodar para sempre se malfeitas. O que muda é <strong>o mecanismo</strong>.</p>
+
+      <table>
+        <tr><th>&nbsp;</th><th>Iteração</th><th>Recursão</th></tr>
+        <tr><td><strong>Instrução de controle</strong></td><td>Repetição (<code>for</code>, <code>while</code>, <code>do…while</code>)</td><td>Seleção (<code>if</code>, <code>if…else</code>, <code>switch</code>)</td></tr>
+        <tr><td><strong>Como repete</strong></td><td>Laço explícito</td><td>Chamadas repetidas ao próprio método</td></tr>
+        <tr><td><strong>Como termina</strong></td><td>Quando a condição do laço falha</td><td>Quando o <strong>caso base</strong> é alcançado</td></tr>
+        <tr><td><strong>Como se aproxima do fim</strong></td><td>Modificando um contador</td><td>Produzindo versões menores do problema</td></tr>
+        <tr><td><strong>Erro possível</strong></td><td>Laço infinito (condição nunca falha)</td><td>Recursão infinita (não converge ao caso base)</td></tr>
+        <tr><td><strong>Custo</strong></td><td>Barata</td><td>Um quadro de pilha por chamada</td></tr>
+      </table>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>A recursão custa mais: <strong>cada chamada empilha um quadro</strong> com suas variáveis locais. Em troca, ela costuma expressar o problema de forma muito mais próxima da definição matemática — compare as duas versões do Fibonacci e a diferença fica evidente.</p>
+      </div>
+    </section>
+
+    <section id="r4-s6">
+      <div class="sec-head"><span class="sec-num">06</span><h2>Pesquisa sequencial × pesquisa binária</h2></div>
+      <p class="lead">Para achar um valor num vetor há duas estratégias, e a diferença de eficiência aumenta conforme o espaço de busca cresce.</p>
+
+      <h3>Pesquisa sequencial</h3>
+      <pre><span class="kw">public static int</span> pesquisaSequencial(<span class="kw">int</span> vetor[], <span class="kw">int</span> num) {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; vetor.length; i++) {
+        <span class="kw">if</span> (vetor[i] == num)
+            <span class="kw">return</span> i;      <span class="cmt">// devolve o ÍNDICE onde achou</span>
+    }
+    <span class="kw">return</span> <span class="num">-1</span>;              <span class="cmt">// não existe no vetor</span>
+}</pre>
+      <p>Varre do início ao fim testando um por um. Funciona sempre, mas fica <strong>lenta quando o vetor é grande</strong>.</p>
+
+      <h3>Pesquisa binária</h3>
+      <p>A cada iteração ela <strong>descarta metade</strong> do espaço de busca: calcula o meio, compara, e continua só na metade onde o valor pode estar.</p>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>A pesquisa binária <strong>só pode ser usada se o vetor estiver ordenado</strong>. É a pré-condição obrigatória — sem ordenação, descartar metade do vetor não faz sentido nenhum.</p>
+      </div>
+
+      <h3>Os três índices de controle</h3>
+      <ul>
+        <li><code>inicio</code> — começa em <code>0</code>.</li>
+        <li><code>fim</code> — começa em <code>vetor.length - 1</code>.</li>
+        <li><code>meio</code> — recalculado a cada iteração: <code>(inicio + fim) / 2</code>.</li>
+      </ul>
+
+      <div class="exam">
+        <span class="tag">Pegadinha comum</span>
+        <p>A divisão de <code>meio</code> é <strong>inteira</strong>: <code>(0+19)/2</code> dá <code>9,5</code>, mas o resultado é <strong>9</strong> — o Java <strong>trunca</strong>, não arredonda. Isso é obrigatório, já que índices de vetor são inteiros.</p>
+      </div>
+    </section>
+
+    <section id="r4-s7">
+      <div class="sec-head"><span class="sec-num">07</span><h2>Pesquisa binária: iterativa e recursiva</h2></div>
+
+      <h3>Versão iterativa</h3>
+      <pre><span class="kw">public static int</span> pesquisaBinariaIterativa(<span class="kw">int</span> vetor[], <span class="kw">int</span> num,
+                                            <span class="kw">int</span> inicio, <span class="kw">int</span> fim) {
+    <span class="kw">int</span> meio;
+    <span class="kw">while</span> (inicio &lt;= fim) {              <span class="cmt">// ainda há espaço de busca</span>
+        meio = (inicio + fim) / <span class="num">2</span>;
+        <span class="kw">if</span> (num == vetor[meio])
+            <span class="kw">return</span> meio;                 <span class="cmt">// achou: devolve o índice</span>
+        <span class="kw">else</span>
+            <span class="kw">if</span> (num &gt; vetor[meio])
+                inicio = meio + <span class="num">1</span>;        <span class="cmt">// procura à DIREITA</span>
+            <span class="kw">else</span>
+                fim = meio - <span class="num">1</span>;           <span class="cmt">// procura à ESQUERDA</span>
+    }
+    <span class="kw">return</span> <span class="num">-1</span>;                          <span class="cmt">// não encontrado</span>
+}</pre>
+
+      <h3>Versão recursiva</h3>
+      <pre><span class="kw">public static int</span> pesquisaBinariaRecursiva(<span class="kw">int</span> vetor[], <span class="kw">int</span> num,
+                                            <span class="kw">int</span> inicio, <span class="kw">int</span> fim) {
+    <span class="kw">int</span> meio;
+    <span class="kw">if</span> (inicio &lt;= fim) {
+        meio = (inicio + fim) / <span class="num">2</span>;
+        <span class="kw">if</span> (num == vetor[meio])
+            <span class="kw">return</span> meio;
+        <span class="kw">else</span>
+            <span class="kw">if</span> (num &gt; vetor[meio])
+                <span class="kw">return</span> pesquisaBinariaRecursiva(vetor, num, meio + <span class="num">1</span>, fim);
+            <span class="kw">else</span>
+                <span class="kw">return</span> pesquisaBinariaRecursiva(vetor, num, inicio, meio - <span class="num">1</span>);
+    }
+    <span class="kw">return</span> <span class="num">-1</span>;
+}</pre>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>As duas versões são <strong>quase idênticas</strong>. A diferença: a iterativa tem um <code>while</code> e <strong>reatribui</strong> <code>inicio</code>/<code>fim</code>; a recursiva troca o <code>while</code> por um <code>if</code> e <strong>passa os novos limites como parâmetros</strong> da chamada. O caso base é o mesmo teste: quando <code>inicio</code> ultrapassa <code>fim</code>, o valor não existe e retorna <code>-1</code>.</p>
+      </div>
+
+      <h3>Rastreando o exemplo do roteiro</h3>
+      <p>Vetor ordenado com 20 elementos (<code>1, 5, 10, …, 95</code>), <code>inicio = 0</code>, <code>fim = 19</code>, procurando o valor <strong>70</strong>:</p>
+      <table>
+        <tr><th>Iteração</th><th>início</th><th>fim</th><th>meio</th><th>vetor[meio]</th><th>Ação</th></tr>
+        <tr><td>1ª</td><td>0</td><td>19</td><td>9</td><td>45</td><td>45 &lt; 70 → <code>inicio = 10</code></td></tr>
+        <tr><td>2ª</td><td>10</td><td>19</td><td>14</td><td>70</td><td><strong>encontrado</strong> → retorna 14</td></tr>
+      </table>
+      <p>Duas comparações contra as <strong>quinze</strong> que a pesquisa sequencial precisaria. Num vetor com bilhões de elementos, a diferença deixa de ser detalhe.</p>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>Os dois métodos retornam o <strong>índice</strong> onde o valor está (não o valor em si) e <code>-1</code> quando não encontram. E lembre da regra de decisão: se o procurado é <strong>maior</strong> que o do meio, ele está à <strong>direita</strong> (<code>inicio = meio+1</code>); se é <strong>menor</strong>, está à <strong>esquerda</strong> (<code>fim = meio-1</code>).</p>
+      </div>
+    </section>
+
+    <section id="r4-flash">
+      <div class="sec-head"><span class="sec-num">★</span><h2>Flashcards</h2></div>
+      <p class="fc-intro">Leia a pergunta, responda de cabeça, e só então clique para revelar.</p>
+      <div class="fc-controls">
+        <button class="fc-btn" onclick="toggleAll(true)">Abrir todos</button>
+        <button class="fc-btn" onclick="toggleAll(false)">Fechar todos</button>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que a <strong>pilha de execução</strong> guarda? Duas variáveis de <strong>mesmo nome</strong> em métodos diferentes são a mesma variável?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Guarda o <strong>ponto de origem da chamada</strong> (para saber para onde voltar) e as <strong>variáveis locais</strong> de cada método, num <em>quadro de pilha</em> por chamada — é uma <strong>pilha (LIFO)</strong>. E <strong>não</strong>: cada quadro tem suas próprias variáveis, são <strong>porções de memória diferentes</strong> mesmo com nome idêntico.<br><a class="goto" href="#r4-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Pilha de execução</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span><code>main</code> chama <code>A(1,2,3)</code>, que chama <code>B(i,j)</code> retornando <code>x+y</code>; depois <code>A</code> faz <code>x = x + k</code>. Qual o valor impresso e em que ordem a pilha é desempilhada?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Imprime <strong>6</strong>. <code>B</code> resolve <code>1+2=3</code> e é desempilhado; <code>A</code> faz <code>3+3=6</code>, retorna e é desempilhado; <code>main</code> imprime e encerra. <strong>Ordem de saída inversa à de entrada</strong> — é uma pilha.<br><a class="goto" href="#r4-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Pilha de execução</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Quais as <strong>duas partes obrigatórias</strong> de um método recursivo?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">O <strong>caso base</strong> (ponto de parada, resolvido sem nova chamada) e o <strong>passo recursivo</strong> (chamada a si mesmo com uma versão menor do problema, que precisa <strong>convergir</strong> para o caso base).<br><a class="goto" href="#r4-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Recursividade</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que acontece se faltar o caso base ou se o passo recursivo não convergir?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Recursão infinita</strong>: a pilha de execução cresce a cada chamada até estourar a memória — <code>StackOverflowError</code>. É o equivalente recursivo do laço infinito.<br><a class="goto" href="#r4-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Recursividade</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que é uma <strong>relação de recorrência</strong>? Escreva a do fatorial e a do Fibonacci.</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">É o problema escrito <strong>em função de si mesmo</strong> — quando existe, dá para escrever a versão recursiva quase direto.<br><strong>Fatorial:</strong> <code>n! = n × (n-1)!</code>, com <code>1! = 1</code>.<br><strong>Fibonacci:</strong> <code>fib(n) = fib(n-1) + fib(n-2)</code>, com <code>fib(1) = fib(2) = 1</code>.<br><a class="goto" href="#r4-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Recursividade</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Escreva o <code>fatorialRecursivo</code>. Qual é o caso base?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>if (n == 1) return 1; else return n * fatorialRecursivo(n-1);</code><br>O caso base é <strong><code>n == 1</code></strong>, que retorna 1 por definição e encerra a recursão.<br><a class="goto" href="#r4-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Fatorial</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Em <code>fatorialRecursivo(4)</code>, <strong>quando</strong> as multiplicações são efetivamente feitas?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Só na <strong>subida</strong>. Na descida as chamadas ficam suspensas na pilha; quando <code>fat(1)</code> devolve 1, os produtos são calculados de dentro para fora: <code>2×1=2 → 3×2=6 → 4×6=24</code>.<br><a class="goto" href="#r4-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Fatorial</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Como se forma a série de Fibonacci? Quais são os primeiros termos?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Os <strong>dois primeiros valem 1</strong>; cada termo seguinte é a <strong>soma dos dois anteriores</strong>: 1, 1, 2, 3, 5, 8, 13, 21, 34… A razão entre um termo e o anterior converge para a <strong>proporção áurea</strong>.<br><a class="goto" href="#r4-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Fibonacci</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Por que o caso base do Fibonacci testa <strong>dois</strong> valores (<code>n == 1 || n == 2</code>)?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Porque a série precisa de <strong>dois termos iniciais conhecidos</strong> para poder somar. Testando só <code>n == 1</code>, a recursão continuaria até <code>fib(0)</code> e nunca pararia.<br><a class="goto" href="#r4-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Fibonacci</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Por que o Fibonacci recursivo é <strong>ineficiente</strong>, diferente do fatorial recursivo?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Porque ele faz <strong>duas chamadas recursivas</strong> no mesmo <code>return</code> (o fatorial faz uma). Isso gera <strong>explosão exponencial</strong> de chamadas, recalculando os mesmos termos várias vezes. O Deitel recomenda evitar recursão nesse estilo.<br><a class="goto" href="#r4-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Fibonacci</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Que <strong>tipo de instrução</strong> a iteração usa e qual a recursão usa? Como cada uma termina?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Iteração:</strong> instrução de <strong>repetição</strong> (<code>for</code>, <code>while</code>), termina quando a condição do laço falha. <strong>Recursão:</strong> instrução de <strong>seleção</strong> (<code>if</code>, <code>if…else</code>), termina quando alcança o <strong>caso base</strong>.<br><a class="goto" href="#r4-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Recursão × iteração</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual a <strong>pré-condição obrigatória</strong> da pesquisa binária?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">O vetor precisa estar <strong>ordenado</strong>. Sem ordenação não faz sentido descartar metade do espaço de busca — a estratégia inteira depende disso.<br><a class="goto" href="#r4-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Sequencial × binária</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Como se calcula o <code>meio</code>? Com <code>inicio=0</code> e <code>fim=19</code>, quanto dá?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>meio = (inicio + fim) / 2</code>. Com 0 e 19 dá 9,5, mas a <strong>divisão é inteira</strong>: o Java <strong>trunca para 9</strong>. Índices de vetor precisam ser inteiros.<br><a class="goto" href="#r4-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Sequencial × binária</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Na pesquisa binária, o que fazer quando o procurado é <strong>maior</strong> que <code>vetor[meio]</code>? E quando é <strong>menor</strong>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Maior</strong> → está à direita: <code>inicio = meio + 1</code>. <strong>Menor</strong> → está à esquerda: <code>fim = meio - 1</code>. O laço continua enquanto <code>inicio &lt;= fim</code>.<br><a class="goto" href="#r4-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · Pesquisa binária</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que os métodos de pesquisa <strong>retornam</strong> ao achar e ao não achar?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Retornam o <strong>índice</strong> onde o valor está (não o valor em si) e <strong><code>-1</code></strong> quando o valor não existe no espaço de busca.<br><a class="goto" href="#r4-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · Pesquisa binária</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual a diferença entre a pesquisa binária <strong>iterativa</strong> e a <strong>recursiva</strong>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">A iterativa usa <code>while (inicio &lt;= fim)</code> e <strong>reatribui</strong> <code>inicio</code>/<code>fim</code> dentro do laço. A recursiva troca o <code>while</code> por um <code>if</code> e <strong>passa os novos limites como parâmetros</strong> da chamada a si mesma. A lógica de decisão é idêntica.<br><a class="goto" href="#r4-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · Pesquisa binária</a></div>
+      </div>
+    </section>
   </div>
 
   <div class="roteiro" id="roteiro-5">
@@ -1031,6 +1786,8 @@ Aluno AlunoAux = <span class="kw">this</span>.getCauda();
   <footer>
     Fontes do roteiro 01: material "Introdução a Arrays" (Prof. Dr. Juliano Varella de Carvalho) · Deitel &amp; Deitel, "Java: Como Programar", 10ª ed., Cap. 7 · videoaula sobre ArrayList (transcrição).<br>
     Fontes do roteiro 02: materiais "Listas Simplesmente Encadeadas" e "Lista Duplamente Encadeada" (Prof. Dr. Juliano Varella de Carvalho) · código-fonte Java fornecido (Aluno, ListaSimplesmenteEncadeada, ListaDuplamenteEncadeada, App) · três videoaulas de detalhamento do código (transcrições).<br>
+    Fontes do roteiro 03: apresentações "Pilha (Stack)" e "Fila (Queue)" (Prof. Dr. Juliano Varella de Carvalho), baseadas em JUNIOR, Dilermando P. et al., "Estrutura de Dados e Técnicas de Programação", Elsevier, 2014 · código-fonte Java fornecido (Pilha/Baralho e Fila/Lancheria) · duas videoaulas (transcrições).<br>
+    Fontes do roteiro 04: Deitel &amp; Deitel, "Java: Como Programar", 10ª ed., Cap. 18 (Recursão) · código-fonte Java fornecido (PilhaExecucao, Fatorial, Fibonacci, Pesquisa) · quatro videoaulas (transcrições).<br>
     Material de estudo pessoal — não substitui a leitura dos roteiros originais.
   </footer>
 
