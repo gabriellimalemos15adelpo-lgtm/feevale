@@ -223,7 +223,7 @@
   <!-- ABAS: uma por roteiro. Marque como .empty as ainda não preenchidas. -->
   <div class="tabbar" id="tabbar">
     <button class="tab" onclick="showRoteiro('roteiro-1', this)">01 · Arrays e ArrayList</button>
-    <button class="tab empty" onclick="showRoteiro('roteiro-2', this)">02 · (a definir)</button>
+    <button class="tab" onclick="showRoteiro('roteiro-2', this)">02 · Listas Encadeadas</button>
     <button class="tab empty" onclick="showRoteiro('roteiro-3', this)">03 · (a definir)</button>
     <button class="tab empty" onclick="showRoteiro('roteiro-4', this)">04 · (a definir)</button>
     <button class="tab empty" onclick="showRoteiro('roteiro-5', this)">05 · (a definir)</button>
@@ -510,12 +510,486 @@ ArrayList&lt;Integer&gt; numeros = <span class="kw">new</span> ArrayList&lt;&gt;
   </div>
 
   <div class="roteiro" id="roteiro-2">
-    <div class="placeholder">
-      <div class="big">○</div>
-      <h2>Roteiro 02 ainda não adicionado</h2>
-      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
-      <p>É só dizer: <code>adiciona o roteiro 2</code> junto com o PDF, link ou transcrição.</p>
-    </div>
+    <h2 class="roteiro-title">Listas Encadeadas (simples e duplas)</h2>
+    <p class="roteiro-lead">Resumo condensado das fontes do roteiro (materiais do Prof. Juliano Varella de Carvalho sobre lista simplesmente e duplamente encadeada, código-fonte Java fornecido e as três videoaulas), seguido de flashcards.</p>
+
+    <nav class="secnav">
+      <a href="#r2-s1">1 · Sequencial × Encadeada</a>
+      <a href="#r2-s2">2 · Nodo e cabeça</a>
+      <a href="#r2-s3">3 · Inserção</a>
+      <a href="#r2-s4">4 · Busca e impressão</a>
+      <a href="#r2-s5">5 · Remoção</a>
+      <a href="#r2-s6">6 · Lista dupla</a>
+      <a href="#r2-s7">7 · Operações na dupla</a>
+      <a href="#r2-s8">8 · Comparativo</a>
+      <a href="#r2-flash">★ Flashcards</a>
+    </nav>
+
+    <section id="r2-s1">
+      <div class="sec-head"><span class="sec-num">01</span><h2>Lista Sequencial × Lista Encadeada</h2></div>
+      <p class="lead">Para guardar vários itens na memória existem duas alternativas: um vetor sequencial (<strong>alocação estática</strong>) ou nodos ligados por ponteiros (<strong>alocação dinâmica</strong>). A primeira é a <em class="term">Lista Linear Sequencial</em>; a segunda, a <em class="term">Lista Linear Encadeada</em>.</p>
+
+      <table>
+        <tr><th>&nbsp;</th><th>Lista Sequencial (array)</th><th>Lista Encadeada</th></tr>
+        <tr><td><strong>Memória</strong></td><td>Contígua (blocos adjacentes)</td><td>Não contígua (espalhada)</td></tr>
+        <tr><td><strong>Alocação</strong></td><td>Estática — tamanho definido em tempo de compilação</td><td>Dinâmica — cresce/encolhe em tempo de execução</td></tr>
+        <tr><td><strong>Acesso</strong></td><td>Direto pelo índice: <code>v[3]</code></td><td>Sequencial — precisa varrer nodo a nodo</td></tr>
+        <tr><td><strong>Desperdício</strong></td><td>Sobra espaço se a previsão foi grande demais</td><td>Só ocupa o que está em uso</td></tr>
+      </table>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>O problema que a lista encadeada resolve é o <strong>tamanho fixo</strong> do array: não é preciso prever quantos itens caberão. O preço pago é a <strong>perda do acesso direto por índice</strong> — não existe "posição 3" numa lista encadeada, só o caminho a partir do início.</p>
+      </div>
+    </section>
+
+    <section id="r2-s2">
+      <div class="sec-head"><span class="sec-num">02</span><h2>O nodo e o cabeça da lista</h2></div>
+      <p class="lead">Uma <em class="term">lista simplesmente encadeada</em> é uma sequência conectada de elementos chamados <em class="term">nodos</em> (ou nós). O nodo é o que se manipula: numa lista de alunos, o nodo é um aluno.</p>
+
+      <h3>Composição do nodo</h3>
+      <p>Todo nodo tem <strong>dois campos</strong>: a <strong>informação</strong> que ele guarda e um <strong>ponteiro para o próximo</strong> nodo da lista.</p>
+
+      <div class="array-viz">
+        <div class="cell"><div class="idx">matrícula</div><div class="val">5</div></div>
+        <div class="cell"><div class="idx">nome</div><div class="val">John</div></div>
+        <div class="cell"><div class="idx">próximo</div><div class="val">2200</div></div>
+      </div>
+
+      <h3>O atributo cabeça</h3>
+      <ul>
+        <li><strong><code>cabeca</code>:</strong> variável que guarda o <strong>endereço de memória do primeiro nodo</strong>, ou seja, onde a lista começa. Fica na classe da lista, não no nodo.</li>
+        <li><strong>Último nodo:</strong> tem o <code>proximo</code> apontando para <code>NULL</code> — é isso que indica o fim da lista.</li>
+        <li><strong>Lista vazia:</strong> <code>cabeca == null</code>.</li>
+      </ul>
+
+      <pre><span class="cmt">// cabeca: 1000</span>
+[1000] 5  John   -&gt; [2200] 10 Paul -&gt; [5000] 15 George -&gt; NULL</pre>
+
+      <h3>Classe Aluno (o nodo)</h3>
+      <pre><span class="kw">public class</span> Aluno {
+    <span class="kw">private int</span> matricula;
+    <span class="kw">private</span> String nome;
+    <span class="kw">private</span> Aluno proximo;   <span class="cmt">// referência para outro Aluno</span>
+
+    <span class="kw">public</span> Aluno(<span class="kw">int</span> matricula, String nome) {
+        <span class="kw">this</span>.matricula = matricula;
+        <span class="kw">this</span>.nome = nome;
+        <span class="kw">this</span>.proximo = <span class="kw">null</span>;    <span class="cmt">// nodo novo SEMPRE nasce com proximo = null</span>
+    }
+    <span class="cmt">// + getters e setters dos três atributos</span>
+}</pre>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>O atributo <code>proximo</code> é do <strong>mesmo tipo da própria classe</strong> (<code>Aluno</code> dentro de <code>Aluno</code>). É essa auto-referência que permite o encadeamento. Ela guarda um <strong>endereço</strong>, não uma cópia do objeto.</p>
+      </div>
+
+      <h3>A classe da lista</h3>
+      <pre><span class="kw">public class</span> ListaSimplesmenteEncadeada {
+    <span class="kw">private</span> Aluno cabeca;   <span class="cmt">// único atributo da lista</span>
+
+    <span class="kw">public</span> ListaSimplesmenteEncadeada(Aluno cabeca) {
+        <span class="kw">this</span>.cabeca = cabeca;
+    }
+}
+
+<span class="cmt">// criar a lista vazia, no App.java:</span>
+ListaSimplesmenteEncadeada lista = <span class="kw">new</span> ListaSimplesmenteEncadeada(<span class="kw">null</span>);</pre>
+    </section>
+
+    <section id="r2-s3">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Inserção: no início e no final</h2></div>
+      <p class="lead">Inserir no início custa <strong>três instruções</strong> e independe do tamanho da lista. Inserir no final exige <strong>varrer a lista inteira</strong> antes.</p>
+
+      <h3>adicionarNoInicio() — 3 instruções</h3>
+      <pre><span class="kw">public void</span> adicionarNoInicio(<span class="kw">int</span> matricula, String nome) {
+    Aluno novo = <span class="kw">new</span> Aluno(matricula, nome);  <span class="cmt">// 1. cria o nodo (proximo = null)</span>
+    novo.setProximo(<span class="kw">this</span>.getCabeca());          <span class="cmt">// 2. novo aponta pro antigo primeiro</span>
+    <span class="kw">this</span>.setCabeca(novo);                      <span class="cmt">// 3. cabeca passa a ser o novo</span>
+}</pre>
+      <p>Funciona igual com a lista vazia: se <code>cabeca</code> é <code>null</code>, o passo 2 apenas mantém <code>novo.proximo = null</code> — e o novo nodo vira o único da lista. Por isso este método <strong>não precisa de <code>if</code></strong>.</p>
+
+      <div class="exam">
+        <span class="tag">Pegadinha comum</span>
+        <p>A <strong>ordem das duas últimas instruções importa</strong>. Se você fizer <code>setCabeca(novo)</code> antes de <code>novo.setProximo(cabeca)</code>, o novo nodo passa a apontar para si mesmo e <strong>toda a lista antiga é perdida</strong> (ninguém mais guarda o endereço dela).</p>
+      </div>
+
+      <h3>adicionarNoFinal() — precisa navegar até o fim</h3>
+      <pre><span class="kw">public void</span> adicionarNoFinal(<span class="kw">int</span> matricula, String nome) {
+    Aluno novo = <span class="kw">new</span> Aluno(matricula, nome);
+    <span class="kw">if</span> (<span class="kw">this</span>.getCabeca() == <span class="kw">null</span>)          <span class="cmt">// lista vazia?</span>
+        <span class="kw">this</span>.setCabeca(novo);                <span class="cmt">// o novo é o cabeca</span>
+    <span class="kw">else</span> {
+        Aluno AlunoAux = <span class="kw">this</span>.getCabeca();   <span class="cmt">// objeto auxiliar p/ navegar</span>
+        <span class="kw">while</span> (AlunoAux.getProximo() != <span class="kw">null</span>)
+            AlunoAux = AlunoAux.getProximo();  <span class="cmt">// anda até o último nodo</span>
+        AlunoAux.setProximo(novo);             <span class="cmt">// o antigo último aponta pro novo</span>
+    }
+}</pre>
+      <p>O <code>novo</code> continua com <code>proximo = null</code>, o que é exatamente o correto para o último nodo. O objeto <code>AlunoAux</code> serve <strong>só para navegar</strong> — ele não cria nem copia nodo nenhum, apenas aponta para endereços que já existem.</p>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>Repare na condição do <code>while</code>: é <code>AlunoAux.getProximo() != null</code> (para no <strong>último nodo</strong>), e não <code>AlunoAux != null</code> (que passaria do fim e daria erro). Essa diferença de uma palavra é clássica em prova.</p>
+      </div>
+
+      <h3>Efeito prático no App.java</h3>
+      <pre>lista.adicionarNoInicio(<span class="num">5</span>,  <span class="str">"John"</span>);
+lista.adicionarNoInicio(<span class="num">10</span>, <span class="str">"Paul"</span>);
+lista.adicionarNoInicio(<span class="num">15</span>, <span class="str">"George"</span>);
+lista.adicionarNoFinal (<span class="num">20</span>, <span class="str">"Ringo"</span>);
+lista.adicionarNoFinal (<span class="num">25</span>, <span class="str">"Pete"</span>);
+
+<span class="cmt">// Resultado: George -> Paul -> John -> Ringo -> Pete -> NULL</span></pre>
+      <div class="exam">
+        <span class="tag">Pegadinha comum</span>
+        <p>Inserir sempre no início <strong>inverte a ordem de inserção</strong>: John entrou primeiro e acabou em terceiro. Inserir no final preserva a ordem. Questões de prova adoram pedir "qual a lista final" depois de uma sequência mista dessas chamadas.</p>
+      </div>
+    </section>
+
+    <section id="r2-s4">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Busca e impressão</h2></div>
+      <p class="lead">Ambas usam o mesmo padrão: um objeto auxiliar que parte do <code>cabeca</code> e caminha pelo <code>proximo</code> até achar o que quer ou bater em <code>NULL</code>.</p>
+
+      <h3>buscarAluno() — devolve o endereço do nodo</h3>
+      <pre><span class="kw">public</span> Aluno buscarAluno(<span class="kw">int</span> matricula) {
+    Aluno AlunoAux = <span class="kw">this</span>.getCabeca();
+    <span class="kw">while</span> (AlunoAux != <span class="kw">null</span> &amp;&amp; AlunoAux.getMatricula() != matricula)
+        AlunoAux = AlunoAux.getProximo();
+    <span class="kw">return</span> AlunoAux;   <span class="cmt">// o nodo achado, ou null se não existir</span>
+}</pre>
+      <p>O retorno é um objeto <code>Aluno</code>, ou seja, <strong>o endereço onde o nodo está na memória</strong> — quem chamou pode ler e alterar os dados dele à vontade. Se a matrícula não existir, o laço termina com <code>AlunoAux == null</code> e é <code>null</code> que volta.</p>
+
+      <div class="exam">
+        <span class="tag">Por que isso acontece</span>
+        <p>A ordem das condições no <code>while</code> não é decorativa: <code>AlunoAux != null</code> vem <strong>primeiro</strong>. O Java usa <strong>curto-circuito</strong> no <code>&amp;&amp;</code> — se o primeiro teste é falso, o segundo nem é avaliado. Invertendo, chamaria <code>getMatricula()</code> sobre <code>null</code> e estouraria <code>NullPointerException</code> ao chegar no fim da lista.</p>
+      </div>
+
+      <h3>imprimirLista() — varre tudo</h3>
+      <pre><span class="kw">public void</span> imprimirLista() {
+    Aluno AlunoAux = <span class="kw">this</span>.getCabeca();
+    <span class="kw">while</span> (AlunoAux != <span class="kw">null</span>) {
+        System.out.print(AlunoAux.getMatricula() + <span class="str">": "</span> + AlunoAux.getNome() + <span class="str">" -&gt; "</span>);
+        AlunoAux = AlunoAux.getProximo();
+    }
+    System.out.print(<span class="str">" NULL "</span>);
+}</pre>
+      <p>Aqui a condição é <code>AlunoAux != null</code> mesmo — a impressão precisa processar o último nodo e só então parar.</p>
+    </section>
+
+    <section id="r2-s5">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Remoção na lista simples</h2></div>
+      <p class="lead">Remover é "costurar" a lista por cima do nodo excluído: o nodo <strong>anterior</strong> passa a apontar para o <strong>posterior</strong>. Para isso é preciso caminhar com <strong>dois ponteiros</strong>.</p>
+
+      <h3>Os três casos que o método avalia</h3>
+      <ol>
+        <li><strong>Nodo não encontrado</strong> → o método não faz nada com a lista.</li>
+        <li><strong>É o primeiro nodo</strong> → o <code>cabeca</code> passa a ser o segundo nodo.</li>
+        <li><strong>É qualquer outro nodo</strong> → o anterior passa a apontar para o posterior do removido.</li>
+      </ol>
+
+      <pre><span class="kw">public void</span> removerAluno(<span class="kw">int</span> matricula) {
+    Aluno AlunoAux = <span class="kw">this</span>.getCabeca();      <span class="cmt">// aponta pro nodo avaliado</span>
+    Aluno AlunoAuxAnterior = <span class="kw">null</span>;           <span class="cmt">// aponta pro nodo de trás</span>
+
+    <span class="kw">while</span> (AlunoAux != <span class="kw">null</span> &amp;&amp; AlunoAux.getMatricula() != matricula) {
+        AlunoAuxAnterior = AlunoAux;             <span class="cmt">// o de trás vira o atual</span>
+        AlunoAux = AlunoAux.getProximo();        <span class="cmt">// e o atual avança</span>
+    }
+
+    <span class="cmt">// caso 2: era o primeiro (o anterior nunca saiu do null)</span>
+    <span class="kw">if</span> (AlunoAuxAnterior == <span class="kw">null</span>) {
+        <span class="kw">this</span>.setCabeca(AlunoAux.getProximo());
+        <span class="kw">return</span>;
+    }
+    <span class="cmt">// caso 3: qualquer outro nodo</span>
+    <span class="kw">if</span> (AlunoAux != <span class="kw">null</span>)
+        AlunoAuxAnterior.setProximo(AlunoAux.getProximo());
+}</pre>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>O teste que distingue os casos é <code>AlunoAuxAnterior == null</code>. Ele só continua <code>null</code> se o laço <strong>nunca deu uma volta</strong>, ou seja, se o nodo procurado já era o primeiro. É assim que o código sabe que precisa mexer no <code>cabeca</code>.</p>
+      </div>
+
+      <p>Removendo a matrícula 10 (Paul) de <code>George → Paul → John</code>: ao sair do laço, <code>AlunoAuxAnterior</code> aponta para George e <code>AlunoAux</code> para Paul. A instrução final faz o <code>proximo</code> de George pular para John, e Paul deixa de fazer parte da lista.</p>
+
+      <pre><span class="cmt">// antes:</span>  George -&gt; Paul -&gt; John -&gt; NULL
+<span class="cmt">// depois:</span> George --------&gt; John -&gt; NULL   <span class="cmt">// Paul fica inalcançável</span></pre>
+      <p>Ninguém "apaga" o Paul da memória explicitamente: como nenhuma referência aponta mais para ele, o <strong>coletor de lixo</strong> do Java se encarrega disso.</p>
+
+      <h3>Remoções mais simples</h3>
+      <pre><span class="cmt">// remover o primeiro: basta o cabeca pular pro segundo</span>
+<span class="kw">public void</span> removerPrimeiroAluno() {
+    <span class="kw">if</span> (<span class="kw">this</span>.getCabeca() != <span class="kw">null</span>) {
+        Aluno AlunoAux = <span class="kw">this</span>.getCabeca();
+        <span class="kw">this</span>.setCabeca(AlunoAux.getProximo());
+    }
+}
+
+<span class="cmt">// remover todos: solta a referência do início e o resto vira lixo</span>
+<span class="kw">public void</span> removerTodosAlunos() {
+    <span class="kw">this</span>.setCabeca(<span class="kw">null</span>);
+}</pre>
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>Para esvaziar a lista inteira basta <strong>uma linha</strong>: <code>cabeca = null</code>. Não é preciso percorrer nodo a nodo — perdida a referência do início, a corrente toda fica inacessível e o coletor de lixo recolhe.</p>
+      </div>
+    </section>
+
+    <section id="r2-s6">
+      <div class="sec-head"><span class="sec-num">06</span><h2>Lista duplamente encadeada e o descritor</h2></div>
+      <p class="lead">Na lista <em class="term">duplamente encadeada</em> cada nodo guarda <strong>dois endereços</strong>: o do próximo e o do anterior. Isso permite varrer a lista <strong>nas duas direções</strong>.</p>
+
+      <div class="array-viz">
+        <div class="cell"><div class="idx">anterior</div><div class="val">NULL</div></div>
+        <div class="cell"><div class="idx">matrícula</div><div class="val">5</div></div>
+        <div class="cell"><div class="idx">nome</div><div class="val">John</div></div>
+        <div class="cell"><div class="idx">próximo</div><div class="val">2200</div></div>
+      </div>
+
+      <ul>
+        <li>Dado um nodo qualquer <strong>n<sub>i</sub></strong>, chega-se tanto ao <strong>n<sub>i−1</sub></strong> quanto ao <strong>n<sub>i+1</sub></strong>.</li>
+        <li>O <code>anterior</code> do <strong>primeiro</strong> nodo aponta para <code>NULL</code>.</li>
+        <li>O <code>proximo</code> do <strong>último</strong> nodo aponta para <code>NULL</code>.</li>
+      </ul>
+
+      <h3>O descritor da lista — 3 atributos</h3>
+      <p>A classe da lista dupla não guarda só o início. Ela mantém o que o material chama de <em class="term">descritor da lista</em>:</p>
+      <table>
+        <tr><th>Atributo</th><th>Tipo</th><th>Função</th></tr>
+        <tr><td><code>cabeca</code></td><td><code>Aluno</code></td><td>Aponta para o <strong>primeiro</strong> nodo</td></tr>
+        <tr><td><code>cauda</code></td><td><code>Aluno</code></td><td>Aponta para o <strong>último</strong> nodo</td></tr>
+        <tr><td><code>tamanho</code></td><td><code>int</code></td><td>Quantidade de nodos da lista</td></tr>
+      </table>
+
+      <pre><span class="kw">public</span> ListaDuplamenteEncadeada() {
+    <span class="kw">this</span>.cabeca  = <span class="kw">null</span>;
+    <span class="kw">this</span>.cauda   = <span class="kw">null</span>;
+    <span class="kw">this</span>.tamanho = <span class="num">0</span>;    <span class="cmt">// lista criada = lista vazia</span>
+}</pre>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>Cauda e tamanho <strong>não são exclusivos</strong> da lista dupla — dava para colocá-los também na simples. O que define uma lista como duplamente encadeada é o <strong>nodo ter o campo <code>anterior</code></strong>. O descritor de três atributos é a estratégia adotada neste material, não uma obrigação teórica.</p>
+      </div>
+    </section>
+
+    <section id="r2-s7">
+      <div class="sec-head"><span class="sec-num">07</span><h2>Operações na lista duplamente encadeada</h2></div>
+      <p class="lead">Toda operação agora precisa manter <strong>quatro coisas</strong> coerentes: os ponteiros <code>proximo</code>, os ponteiros <code>anterior</code>, o <code>cabeca</code>/<code>cauda</code> e o <code>tamanho</code>.</p>
+
+      <h3>adicionarNoInicio()</h3>
+      <pre><span class="kw">public void</span> adicionarNoInicio(<span class="kw">int</span> matricula, String nome) {
+    Aluno novo = <span class="kw">new</span> Aluno(matricula, nome);
+    <span class="kw">if</span> (<span class="kw">this</span>.getCabeca() == <span class="kw">null</span>)              <span class="cmt">// lista vazia:</span>
+        <span class="kw">this</span>.setCauda(novo);                    <span class="cmt">// o novo também é a cauda</span>
+    <span class="kw">else</span>
+        <span class="kw">this</span>.getCabeca().setAnterior(novo);     <span class="cmt">// o antigo 1º aponta pra trás</span>
+
+    novo.setProximo(<span class="kw">this</span>.getCabeca());
+    novo.setAnterior(<span class="kw">null</span>);                     <span class="cmt">// é o 1º: nada antes dele</span>
+    <span class="kw">this</span>.setCabeca(novo);
+    <span class="kw">this</span>.setTamanho(<span class="kw">this</span>.getTamanho() + <span class="num">1</span>);
+}</pre>
+
+      <h3>adicionarNoFinal()</h3>
+      <pre><span class="kw">public void</span> adicionarNoFinal(<span class="kw">int</span> matricula, String nome) {
+    Aluno novo = <span class="kw">new</span> Aluno(matricula, nome);
+    <span class="kw">if</span> (<span class="kw">this</span>.getCauda() == <span class="kw">null</span>)               <span class="cmt">// lista vazia:</span>
+        <span class="kw">this</span>.setCabeca(novo);                   <span class="cmt">// o novo também é o cabeca</span>
+    <span class="kw">else</span>
+        <span class="kw">this</span>.getCauda().setProximo(novo);       <span class="cmt">// o antigo último aponta pro novo</span>
+
+    novo.setAnterior(<span class="kw">this</span>.getCauda());
+    novo.setProximo(<span class="kw">null</span>);                      <span class="cmt">// é o último: nada depois</span>
+    <span class="kw">this</span>.setCauda(novo);
+    <span class="kw">this</span>.setTamanho(<span class="kw">this</span>.getTamanho() + <span class="num">1</span>);
+}</pre>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>Os dois métodos são <strong>espelhados</strong>: inserindo no início, o <code>if</code> testa o <code>cabeca</code> e ajusta a <code>cauda</code>; inserindo no fim, testa a <code>cauda</code> e ajusta o <code>cabeca</code>. O motivo é o mesmo nos dois: quando a lista está vazia, o nodo inserido é ao mesmo tempo o primeiro e o último.</p>
+      </div>
+
+      <div class="exam">
+        <span class="tag">Cai na prova</span>
+        <p>Diferença crucial para a lista simples: <strong>inserir no final aqui é imediato</strong>, sem <code>while</code> nenhum, porque a <code>cauda</code> já guarda o endereço do último nodo. Na lista simples era preciso varrer a lista toda.</p>
+      </div>
+
+      <h3>removerAluno() — agora com quatro ajustes</h3>
+      <pre><span class="kw">public void</span> removerAluno(<span class="kw">int</span> matricula) {
+    Aluno AlunoAux = <span class="kw">this</span>.getCabeca();
+    Aluno AlunoAuxAnterior = <span class="kw">null</span>;
+    <span class="kw">while</span> (AlunoAux != <span class="kw">null</span> &amp;&amp; AlunoAux.getMatricula() != matricula) {
+        AlunoAuxAnterior = AlunoAux;
+        AlunoAux = AlunoAux.getProximo();
+    }
+    <span class="kw">if</span> (AlunoAuxAnterior == <span class="kw">null</span>) {               <span class="cmt">// era o primeiro</span>
+        <span class="kw">this</span>.setCabeca(AlunoAux.getProximo());
+        AlunoAux.setAnterior(<span class="kw">null</span>);
+        <span class="kw">this</span>.setTamanho(<span class="kw">this</span>.getTamanho() - <span class="num">1</span>);
+        <span class="kw">return</span>;
+    }
+    <span class="kw">if</span> (AlunoAux != <span class="kw">null</span>) {                       <span class="cmt">// qualquer outro</span>
+        AlunoAuxAnterior.setProximo(AlunoAux.getProximo());
+        <span class="kw">if</span> (AlunoAux.getProximo() != <span class="kw">null</span>)          <span class="cmt">// não era o último?</span>
+            AlunoAux.getProximo().setAnterior(AlunoAuxAnterior);
+        <span class="kw">this</span>.setTamanho(<span class="kw">this</span>.getTamanho() - <span class="num">1</span>);
+    }
+}</pre>
+      <p>Removendo John de <code>Paul ⇄ John ⇄ George</code>: o <code>proximo</code> de Paul passa a ser George, e o <code>anterior</code> de George passa a ser Paul. <strong>Os dois sentidos precisam ser costurados</strong> — esquecer o <code>anterior</code> quebra a impressão invertida.</p>
+
+      <div class="exam">
+        <span class="tag">Pegadinha comum</span>
+        <p>O <code>if (AlunoAux.getProximo() != null)</code> existe porque, se o nodo removido era o <strong>último</strong>, não há nodo posterior para ajustar o <code>anterior</code> — chamar <code>setAnterior()</code> sobre <code>null</code> daria <code>NullPointerException</code>.</p>
+      </div>
+
+      <h3>Impressão nos dois sentidos</h3>
+      <pre><span class="cmt">// do início para o fim: parte do cabeca, anda pelo proximo</span>
+Aluno AlunoAux = <span class="kw">this</span>.getCabeca();
+<span class="kw">while</span> (AlunoAux != <span class="kw">null</span>) AlunoAux = AlunoAux.getProximo();
+
+<span class="cmt">// do fim para o início: parte da cauda, anda pelo anterior</span>
+Aluno AlunoAux = <span class="kw">this</span>.getCauda();
+<span class="kw">while</span> (AlunoAux != <span class="kw">null</span>) AlunoAux = AlunoAux.getAnterior();</pre>
+      <p>A impressão invertida é a demonstração mais direta da vantagem da lista dupla: numa lista simplesmente encadeada ela seria inviável sem recursividade ou uma estrutura auxiliar.</p>
+    </section>
+
+    <section id="r2-s8">
+      <div class="sec-head"><span class="sec-num">08</span><h2>Comparativo e pontos de atenção</h2></div>
+
+      <table>
+        <tr><th>&nbsp;</th><th>Simplesmente encadeada</th><th>Duplamente encadeada</th></tr>
+        <tr><td><strong>Campos do nodo</strong></td><td>informação + <code>proximo</code></td><td>informação + <code>proximo</code> + <code>anterior</code></td></tr>
+        <tr><td><strong>Atributos da lista</strong></td><td><code>cabeca</code></td><td><code>cabeca</code>, <code>cauda</code>, <code>tamanho</code></td></tr>
+        <tr><td><strong>Navegação</strong></td><td>Só para frente</td><td>Frente e trás</td></tr>
+        <tr><td><strong>Inserir no início</strong></td><td>Imediato</td><td>Imediato</td></tr>
+        <tr><td><strong>Inserir no final</strong></td><td>Varre a lista toda</td><td>Imediato (usa a <code>cauda</code>)</td></tr>
+        <tr><td><strong>Saber o tamanho</strong></td><td>Precisa contar</td><td>Imediato (atributo <code>tamanho</code>)</td></tr>
+        <tr><td><strong>Memória por nodo</strong></td><td>Menor</td><td>Maior (um ponteiro a mais)</td></tr>
+      </table>
+
+      <div class="exam">
+        <span class="tag">Conceito-chave</span>
+        <p>A lista dupla troca <strong>memória por velocidade e flexibilidade</strong>: gasta um ponteiro a mais em cada nodo e exige mais ajustes em cada operação, mas dá navegação nos dois sentidos e acesso imediato ao fim da lista.</p>
+      </div>
+
+      <h3>Erros que aparecem em prova prática</h3>
+      <ul>
+        <li><strong>Perder a lista:</strong> mexer no <code>cabeca</code> antes de guardar a referência do resto.</li>
+        <li><strong>Esquecer o <code>anterior</code>:</strong> na lista dupla, ajustar só o <code>proximo</code> deixa a lista consistente numa direção e quebrada na outra.</li>
+        <li><strong>Esquecer o <code>tamanho</code>:</strong> toda inserção soma 1 e toda remoção subtrai 1 — se um caminho do <code>if</code> não fizer isso, o descritor mente.</li>
+        <li><strong>Condição de parada trocada:</strong> <code>AlunoAux != null</code> (varrer tudo) × <code>AlunoAux.getProximo() != null</code> (parar no último).</li>
+        <li><strong>Remover de lista vazia:</strong> no código fornecido, chamar <code>removerAluno()</code> com a lista vazia cai no <code>if (AlunoAuxAnterior == null)</code> com <code>AlunoAux</code> valendo <code>null</code> e estoura <code>NullPointerException</code>. Um teste de lista vazia no início do método resolveria.</li>
+      </ul>
+    </section>
+
+    <section id="r2-flash">
+      <div class="sec-head"><span class="sec-num">★</span><h2>Flashcards</h2></div>
+      <p class="fc-intro">Leia a pergunta, responda de cabeça, e só então clique para revelar.</p>
+      <div class="fc-controls">
+        <button class="fc-btn" onclick="toggleAll(true)">Abrir todos</button>
+        <button class="fc-btn" onclick="toggleAll(false)">Fechar todos</button>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual a diferença de <strong>alocação</strong> e de <strong>memória</strong> entre lista sequencial e lista encadeada?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Sequencial:</strong> alocação estática (tamanho fixado em tempo de compilação), memória contígua, acesso direto por índice. <strong>Encadeada:</strong> alocação dinâmica (cresce em tempo de execução), memória não contígua, acesso apenas sequencial.<br><a class="goto" href="#r2-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Sequencial × Encadeada</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>De quais <strong>dois campos</strong> é composto um nodo? O que guarda o <code>cabeca</code>? Como se sabe que a lista <strong>acabou</strong> — e que ela está <strong>vazia</strong>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Nodo:</strong> a informação que ele armazena (ex.: matrícula e nome) + um ponteiro para o <strong>próximo</strong> nodo. <strong><code>cabeca</code>:</strong> guarda o endereço do <strong>primeiro</strong> nodo (fica na classe da lista, não no nodo). A lista <strong>acaba</strong> no nodo cujo <code>proximo</code> é <code>NULL</code>; está <strong>vazia</strong> quando o próprio <code>cabeca</code> é <code>null</code>.<br><a class="goto" href="#r2-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Nodo e cabeça</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Quais são as <strong>três instruções</strong> do <code>adicionarNoInicio()</code>, na ordem?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">1) <code>Aluno novo = new Aluno(...)</code> · 2) <code>novo.setProximo(getCabeca())</code> · 3) <code>setCabeca(novo)</code>.<br>Inverter 2 e 3 <strong>perde a lista inteira</strong>: o novo nodo apontaria para si mesmo e ninguém guardaria o endereço do resto.<br><a class="goto" href="#r2-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Inserção</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Numa lista vazia executo: <code>adicionarNoInicio(5,"John")</code>, <code>adicionarNoInicio(10,"Paul")</code>, <code>adicionarNoFinal(20,"Ringo")</code>. Como fica a lista?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><strong>Paul → John → Ringo → NULL.</strong> Inserir no início <strong>inverte</strong> a ordem de inserção (Paul entrou depois de John e ficou na frente); inserir no final preserva.<br><a class="goto" href="#r2-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Inserção</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Qual a diferença entre parar com <code>while (aux != null)</code> e <code>while (aux.getProximo() != null)</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a"><code>aux != null</code> percorre <strong>todos os nodos</strong> e termina fora da lista (usado em busca e impressão). <code>aux.getProximo() != null</code> <strong>para no último nodo</strong>, deixando <code>aux</code> apontando para ele (usado no <code>adicionarNoFinal</code>).<br><a class="goto" href="#r2-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Inserção</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que o <code>buscarAluno()</code> <strong>retorna</strong>, e o que retorna se não achar?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Retorna um objeto <code>Aluno</code> — o <strong>endereço do nodo na memória</strong>, permitindo a quem chamou manipular os dados dele. Se a matrícula não existir, retorna <code>null</code>.<br><a class="goto" href="#r2-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Busca e impressão</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Quais são as <strong>três situações</strong> avaliadas pelo <code>removerAluno()</code>?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">1) Nodo <strong>não encontrado</strong> → não faz nada. 2) Nodo é o <strong>primeiro</strong> → o <code>cabeca</code> passa a ser o segundo. 3) <strong>Qualquer outro</strong> nodo → o anterior passa a apontar para o posterior do removido.<br><a class="goto" href="#r2-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Remoção</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Para que servem os dois objetos <code>AlunoAux</code> e <code>AlunoAuxAnterior</code>? Como o código sabe que o nodo removido era o primeiro?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Servem para <strong>navegar</strong> pela lista: <code>AlunoAux</code> aponta para o nodo avaliado e <code>AlunoAuxAnterior</code> sempre para o de trás. Se ao sair do laço <code>AlunoAuxAnterior</code> ainda for <code>null</code>, o laço <strong>não deu nenhuma volta</strong> — logo o nodo procurado era o primeiro.<br><a class="goto" href="#r2-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Remoção</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Como se remove <strong>todos</strong> os nodos da lista simplesmente encadeada? Por que funciona?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Uma única instrução: <code>setCabeca(null)</code>. Perdida a referência do início, <strong>nenhum nodo é mais alcançável</strong> e o coletor de lixo do Java recolhe a corrente inteira.<br><a class="goto" href="#r2-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Remoção</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>O que é o <strong>descritor da lista</strong> e quais seus três atributos?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">É o conjunto de atributos que a lista duplamente encadeada mantém atualizado: <code>cabeca</code> (primeiro nodo), <code>cauda</code> (último nodo) e <code>tamanho</code> (int com a quantidade de nodos).<br><a class="goto" href="#r2-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Lista dupla</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Numa lista duplamente encadeada, para onde apontam o <code>anterior</code> do primeiro nodo e o <code>proximo</code> do último?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Ambos para <code>NULL</code>. São as duas "bordas" da lista — conhecendo o endereço de qualquer nodo, dá para varrê-la <strong>nas duas direções</strong> até bater em <code>NULL</code>.<br><a class="goto" href="#r2-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Lista dupla</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Por que o <code>adicionarNoInicio()</code> da lista dupla mexe na <strong>cauda</strong> quando a lista está vazia?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Porque numa lista vazia o nodo inserido é <strong>ao mesmo tempo o primeiro e o último</strong>. O método espelhado faz o inverso: <code>adicionarNoFinal()</code> testa a <code>cauda</code> e ajusta o <code>cabeca</code>.<br><a class="goto" href="#r2-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · Operações na dupla</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Por que inserir no final é <strong>rápido</strong> na lista dupla e <strong>lento</strong> na simples?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">A lista dupla mantém a <code>cauda</code>, que já guarda o endereço do último nodo — insere direto. A simples só tem o <code>cabeca</code>, então precisa de um <code>while</code> que <strong>varre a lista inteira</strong> até achar o último.<br><a class="goto" href="#r2-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · Operações na dupla</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Ao remover um nodo do meio de uma lista dupla, <strong>quantos ponteiros</strong> precisam ser ajustados? Quais?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Dois: o <code>proximo</code> do nodo <strong>anterior</strong> passa a apontar para o posterior, e o <code>anterior</code> do nodo <strong>posterior</strong> passa a apontar para o anterior. Mais o <code>tamanho</code>, que é decrementado. Se o removido era o último, o segundo ajuste é pulado (não há nodo posterior).<br><a class="goto" href="#r2-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · Operações na dupla</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Como se imprime uma lista <strong>de trás para frente</strong>? Por que isso é inviável na lista simples?</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">Parte-se da <code>cauda</code> e caminha-se pelo <code>getAnterior()</code> até <code>null</code>. Na lista simples o nodo não guarda o anterior — só existe caminho para a frente, então não há como voltar sem recursividade ou estrutura auxiliar.<br><a class="goto" href="#r2-s7" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 07 · Operações na dupla</a></div>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')">
+        <div class="fc-q"><span class="qmark">Q</span><span>Cite <strong>três erros clássicos</strong> ao implementar essas listas.</span></div>
+        <div class="hint">clique para revelar</div>
+        <div class="fc-a">1) Mexer no <code>cabeca</code> antes de guardar o resto da lista → <strong>perde a lista</strong>. 2) Na dupla, ajustar só o <code>proximo</code> e <strong>esquecer o <code>anterior</code></strong> → lista quebrada num sentido. 3) Esquecer de somar/subtrair o <code>tamanho</code> em algum caminho do <code>if</code> → o descritor mente.<br><a class="goto" href="#r2-s8" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 08 · Comparativo</a></div>
+      </div>
+    </section>
   </div>
 
   <div class="roteiro" id="roteiro-3">
@@ -556,6 +1030,7 @@ ArrayList&lt;Integer&gt; numeros = <span class="kw">new</span> ArrayList&lt;&gt;
 
   <footer>
     Fontes do roteiro 01: material "Introdução a Arrays" (Prof. Dr. Juliano Varella de Carvalho) · Deitel &amp; Deitel, "Java: Como Programar", 10ª ed., Cap. 7 · videoaula sobre ArrayList (transcrição).<br>
+    Fontes do roteiro 02: materiais "Listas Simplesmente Encadeadas" e "Lista Duplamente Encadeada" (Prof. Dr. Juliano Varella de Carvalho) · código-fonte Java fornecido (Aluno, ListaSimplesmenteEncadeada, ListaDuplamenteEncadeada, App) · três videoaulas de detalhamento do código (transcrições).<br>
     Material de estudo pessoal — não substitui a leitura dos roteiros originais.
   </footer>
 
