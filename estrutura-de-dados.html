@@ -226,8 +226,8 @@
     <button class="tab" onclick="showRoteiro('roteiro-2', this)">02 · Listas Encadeadas</button>
     <button class="tab" onclick="showRoteiro('roteiro-3', this)">03 · Pilhas e Filas</button>
     <button class="tab" onclick="showRoteiro('roteiro-4', this)">04 · Recursividade e Busca</button>
-    <button class="tab empty" onclick="showRoteiro('roteiro-5', this)">05 · (a definir)</button>
-    <button class="tab empty" onclick="showRoteiro('roteiro-6', this)">06 · (a definir)</button>
+    <button class="tab" onclick="showRoteiro('roteiro-5', this)">05 · Ordenação</button>
+    <button class="tab" onclick="showRoteiro('roteiro-6', this)">06 · Merge Sort</button>
   </div>
 
   <!-- PAINÉIS DOS ROTEIROS -->
@@ -1766,21 +1766,278 @@ fat(1) = 1  →  fat(2) = 2*1 = 2  →  fat(3) = 3*2 = 6  →  fat(4) = 4*6 = 24
   </div>
 
   <div class="roteiro" id="roteiro-5">
-    <div class="placeholder">
-      <div class="big">○</div>
-      <h2>Roteiro 05 ainda não adicionado</h2>
-      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
-      <p>É só dizer: <code>adiciona o roteiro 5</code> junto com o PDF, link ou transcrição.</p>
-    </div>
+    <h2 class="roteiro-title">Ordenação: Bubble, Selection e Insertion Sort</h2>
+    <p class="roteiro-lead">Resumo do capítulo 2 de <em>Estruturas de dados</em> (Ascencio e Araújo), dos três códigos Java fornecidos e das três videoaulas, seguido de flashcards.</p>
+
+    <nav class="secnav">
+      <a href="#r5-s1">1 · Ideia geral</a>
+      <a href="#r5-s2">2 · Bubble Sort</a>
+      <a href="#r5-s3">3 · Selection Sort</a>
+      <a href="#r5-s4">4 · Insertion Sort</a>
+      <a href="#r5-s5">5 · Comparação</a>
+      <a href="#r5-s6">6 · Código fornecido</a>
+      <a href="#r5-flash">★ Flashcards</a>
+    </nav>
+
+    <section id="r5-s1">
+      <div class="sec-head"><span class="sec-num">01</span><h2>O que significa ordenar?</h2></div>
+      <p class="lead">Ordenar é colocar os elementos de um vetor em uma sequência definida, como <strong>crescente</strong> ou <strong>decrescente</strong>. Os três algoritmos deste roteiro modificam o próprio vetor e usam um laço externo para repetir uma operação sobre ele.</p>
+      <p>Nos exemplos, a entrada é <code>[9, 8, 4, 2]</code> e queremos chegar a <code>[2, 4, 8, 9]</code>. Cada estratégia garante uma parte diferente do vetor a cada passagem:</p>
+      <table>
+        <thead><tr><th>Estratégia</th><th>O que fica garantido</th><th>Operação central</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Bubble</strong></td><td>O maior valor restante chega ao fim.</td><td>Comparar vizinhos e trocar quando estão invertidos.</td></tr>
+          <tr><td><strong>Selection</strong></td><td>O menor valor restante chega ao início.</td><td>Encontrar o índice do menor e trocar uma vez ao fim da busca.</td></tr>
+          <tr><td><strong>Insertion</strong></td><td>A parte à esquerda continua ordenada.</td><td>Deslocar os maiores e inserir a chave no espaço aberto.</td></tr>
+        </tbody>
+      </table>
+      <div class="exam"><span class="tag">Para não confundir</span><p><strong>Bubble</strong> troca vizinhos durante a passagem; <strong>Selection</strong> procura o menor antes de trocar; <strong>Insertion</strong> guarda uma chave e desloca elementos para abrir espaço.</p></div>
+    </section>
+
+    <section id="r5-s2">
+      <div class="sec-head"><span class="sec-num">02</span><h2>Bubble Sort: o maior “borbulha” para o fim</h2></div>
+      <p class="lead">Compare <code>vetor[j]</code> com <code>vetor[j+1]</code>. Na ordem crescente, troque se o da esquerda for <strong>maior</strong>. Ao terminar uma passagem, o maior valor ainda não ordenado está na posição correta.</p>
+      <h3>Rastreando <code>[9, 8, 4, 2]</code></h3>
+      <pre>Início:      [9, 8, 4, 2]
+1ª passagem: [8, 4, 2, 9]  <span class="cmt">// 9 chegou ao fim</span>
+2ª passagem: [4, 2, 8, 9]  <span class="cmt">// 8 chegou à penúltima posição</span>
+3ª passagem: [2, 4, 8, 9]  <span class="cmt">// resta apenas o primeiro elemento</span></pre>
+      <p>O laço interno pode ficar <strong>menor a cada passagem</strong>: não é preciso comparar de novo a parte final já ordenada. No código entregue, <code>i</code> começa em 1 e <code>j &lt; vetor.length - i</code>; assim, a primeira passagem compara até o último par e a seguinte para uma posição antes.</p>
+      <pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt; vetor.length; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; vetor.length - i; j++) {
+        <span class="kw">if</span> (vetor[j] &gt; vetor[j + <span class="num">1</span>]) {
+            <span class="kw">int</span> aux = vetor[j];
+            vetor[j] = vetor[j + <span class="num">1</span>];
+            vetor[j + <span class="num">1</span>] = aux;
+        }
+    }
+}</pre>
+      <h3>Quando pode parar antes?</h3>
+      <p>Se uma passagem inteira ocorrer <strong>sem nenhuma troca</strong>, o vetor já está ordenado. A videoaula propõe uma <code>flag</code> para registrar trocas e sair cedo. No arquivo Java fornecido, porém, as linhas dessa otimização estão <strong>comentadas</strong>; a execução atual faz todas as passagens.</p>
+      <div class="exam"><span class="tag">Custo</span><p>Com o limite interno reduzido, há <code>(n−1) + (n−2) + ... + 1 = n(n−1)/2</code> comparações: <strong>O(n²)</strong> mesmo se o vetor já estiver ordenado. Com a parada por ausência de trocas corretamente ativada, o melhor caso cai para <strong>O(n)</strong>; o pior continua <strong>O(n²)</strong>.</p></div>
+    </section>
+
+    <section id="r5-s3">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Selection Sort: escolher o menor</h2></div>
+      <p class="lead">Em cada passagem, considere <code>i</code> como início da parte ainda desordenada. Procure o <strong>índice</strong> do menor valor entre <code>i</code> e o fim; só depois da busca troque esse valor com <code>vetor[i]</code>.</p>
+      <h3>Rastreando <code>[9, 8, 4, 2]</code></h3>
+      <pre>Início:      [9, 8, 4, 2]
+i = 0:      [2, 8, 4, 9]  <span class="cmt">// menor = 2 (índice 3); troca com 9</span>
+i = 1:      [2, 4, 8, 9]  <span class="cmt">// menor restante = 4; troca com 8</span>
+i = 2:      [2, 4, 8, 9]  <span class="cmt">// 8 já está na posição correta</span></pre>
+      <pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; vetor.length; i++) {
+    <span class="kw">int</span> menor = i;
+    <span class="kw">for</span> (<span class="kw">int</span> j = i + <span class="num">1</span>; j &lt; vetor.length; j++) {
+        <span class="kw">if</span> (vetor[j] &lt; vetor[menor]) menor = j;
+    }
+    <span class="kw">int</span> aux = vetor[menor];
+    vetor[menor] = vetor[i];
+    vetor[i] = aux;
+}</pre>
+      <p><code>menor</code> guarda uma <strong>posição</strong>, não o número menor. O laço interno só atualiza esse índice; a troca acontece depois que a busca termina. O código fornecido ainda executa <code>i = n−1</code>, quando resta apenas um elemento e ocorre uma troca dele consigo mesmo. Parar em <code>i &lt; n−1</code> evita esse passo redundante.</p>
+      <div class="exam"><span class="tag">Custo</span><p>A busca faz <code>(n−1) + ... + 1 = n(n−1)/2</code> comparações tanto em vetor ordenado quanto invertido: <strong>O(n²)</strong> em ambos os casos. Há, no máximo, uma troca por passagem, embora a implementação fornecida também troque quando <code>menor == i</code>.</p></div>
+    </section>
+
+    <section id="r5-s4">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Insertion Sort: inserir a chave no lugar certo</h2></div>
+      <p class="lead">Pense em organizar cartas na mão. Comece no <strong>segundo</strong> elemento: o único valor à esquerda já está ordenado. Guarde o valor atual em <code>key</code>, desloque para a direita os valores maiores e coloque a chave no espaço livre.</p>
+      <h3>Rastreando <code>[9, 8, 4, 2]</code></h3>
+      <pre>Início:      [9, 8, 4, 2]
+Chave 8:    [8, 9, 4, 2]  <span class="cmt">// move 9; insere 8</span>
+Chave 4:    [4, 8, 9, 2]  <span class="cmt">// move 9 e 8; insere 4</span>
+Chave 2:    [2, 4, 8, 9]  <span class="cmt">// move 9, 8 e 4; insere 2</span></pre>
+      <pre><span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">1</span>; j &lt; vetor.length; j++) {
+    <span class="kw">int</span> key = vetor[j];
+    <span class="kw">int</span> i = j - <span class="num">1</span>;
+    <span class="kw">while</span> (i &gt;= <span class="num">0</span> &amp;&amp; vetor[i] &gt; key) {
+        vetor[i + <span class="num">1</span>] = vetor[i]; <span class="cmt">// desloca, não troca</span>
+        i--;
+    }
+    vetor[i + <span class="num">1</span>] = key;   <span class="cmt">// preenche o espaço aberto</span>
+}</pre>
+      <p>O <code>while</code> termina ao chegar ao início do vetor (<code>i &lt; 0</code>) ou ao encontrar um elemento <strong>menor ou igual</strong> à chave. Nesse ponto, <code>i+1</code> é a posição da inserção. Guardar <code>key</code> antes de deslocar impede que o valor original se perca.</p>
+      <div class="exam"><span class="tag">Custo</span><p>Se o vetor já está ordenado, o <code>while</code> falha na primeira comparação de cada passagem: <strong>O(n)</strong>. Na ordem inversa, cada chave percorre toda a parte esquerda: <strong>O(n²)</strong>. Por isso é especialmente útil quando os dados estão quase ordenados.</p></div>
+    </section>
+
+    <section id="r5-s5">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Comparando as três estratégias</h2></div>
+      <table>
+        <thead><tr><th>Critério</th><th>Bubble do código</th><th>Selection</th><th>Insertion</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Melhor caso</strong></td><td>O(n²); com saída antecipada, O(n)</td><td>O(n²)</td><td>O(n)</td></tr>
+          <tr><td><strong>Pior caso</strong></td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td></tr>
+          <tr><td><strong>Memória extra</strong></td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td><strong>Movimentação</strong></td><td>Troca vizinhos possivelmente muitas vezes</td><td>Uma troca por passagem</td><td>Desloca os maiores e insere a chave</td></tr>
+          <tr><td><strong>Elementos iguais</strong></td><td>Estável com <code>&gt;</code></td><td>Em geral, não estável</td><td>Estável com <code>&gt;</code></td></tr>
+        </tbody>
+      </table>
+      <p><strong>Estável</strong> significa preservar a ordem relativa de registros que têm a mesma chave. No Bubble e no Insertion fornecidos, a condição estrita <code>&gt;</code> não inverte elementos iguais; no Selection, a troca com um elemento distante pode inverter essa ordem.</p>
+      <p>A videoaula descreve uma progressão de eficiência entre Bubble, Selection e Insertion. Isso depende dos dados e do que se mede: <strong>os três ainda podem gastar O(n²)</strong>. Selection costuma movimentar menos valores; Insertion se beneficia de entrada já ordenada ou quase ordenada.</p>
+    </section>
+
+    <section id="r5-s6">
+      <div class="sec-head"><span class="sec-num">06</span><h2>Como ler os arquivos Java fornecidos</h2></div>
+      <p>Os três programas criam um <code>int[10]</code>, preenchem o vetor com <code>Random.nextInt(100)</code> (valores de 0 a 99), imprimem a situação inicial, ordenam e imprimem o resultado. <code>montar</code> prepara os dados; <code>imprimir</code> mostra os valores; o método de ordenação altera o vetor recebido.</p>
+      <ul>
+        <li><strong>Bubble:</strong> a linha para usar uma <code>flag</code> está comentada. Para a saída antecipada funcionar, seria preciso declarar a variável, zerá-la antes de cada passagem, marcá-la quando há troca e encerrar ao fim de uma passagem sem trocas.</li>
+        <li><strong>Selection e Insertion:</strong> há uma <strong>segunda chamada a <code>montar(vetor)</code></strong> entre a impressão “DESORDENADO” e a ordenação. Ela gera novos números; assim, a linha “ORDENADO” não corresponde aos mesmos valores mostrados antes. Para acompanhar o antes e depois do mesmo vetor, remova essa segunda chamada.</li>
+        <li><strong>Impressão:</strong> <code>System.out.println("*********** %s ***********\n" + msg)</code> escreve o texto <code>%s</code> literalmente. Se quiser interpolar a mensagem, use <code>System.out.printf("*********** %s ***********%n", msg)</code>.</li>
+      </ul>
+      <div class="exam"><span class="tag">Teste mental rápido</span><p>Se o vetor já está em ordem crescente: Bubble sem <code>flag</code> ainda percorre todos os pares previstos; Selection ainda procura o menor em todas as passagens; Insertion verifica cada chave e quase não desloca valores.</p></div>
+    </section>
+
+    <section id="r5-flash">
+      <div class="sec-head"><span class="sec-num">★</span><h2>Flashcards</h2></div>
+      <p class="fc-intro">Leia a pergunta, responda de cabeça, e só então clique para revelar.</p>
+      <div class="fc-controls">
+        <button class="fc-btn" onclick="toggleAll(true)">Abrir todos</button>
+        <button class="fc-btn" onclick="toggleAll(false)">Fechar todos</button>
+      </div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>O que cada passagem do <strong>Bubble Sort</strong> garante na ordem crescente?</span></div><div class="hint">clique para revelar</div><div class="fc-a">O <strong>maior elemento ainda não ordenado</strong> chega ao fim da parte ativa. Por isso o laço interno pode encurtar uma posição na passagem seguinte.<br><a class="goto" href="#r5-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Bubble Sort</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Quando o Bubble crescente troca <code>vetor[j]</code> e <code>vetor[j+1]</code>?</span></div><div class="hint">clique para revelar</div><div class="fc-a">Quando <code>vetor[j] &gt; vetor[j+1]</code>. Valores já em ordem ou iguais permanecem onde estão.<br><a class="goto" href="#r5-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Bubble Sort</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>O que indica uma passagem do Bubble <strong>sem trocas</strong>? Isso já acontece no código enviado?</span></div><div class="hint">clique para revelar</div><div class="fc-a">Indica que o vetor está ordenado e o algoritmo pode parar. A <code>flag</code> para essa saída antecipada aparece <strong>comentada</strong> no código, então a versão atual continua as passagens.<br><a class="goto" href="#r5-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Bubble Sort</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>No <strong>Selection Sort</strong>, o que a variável <code>menor</code> guarda?</span></div><div class="hint">clique para revelar</div><div class="fc-a">O <strong>índice</strong> do menor valor encontrado na parte ainda desordenada. A troca com <code>vetor[i]</code> ocorre depois do laço interno.<br><a class="goto" href="#r5-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Selection Sort</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Após a primeira passagem de Selection em <code>[9, 8, 4, 2]</code>, como fica o vetor?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><code>[2, 8, 4, 9]</code>. O menor valor, 2, troca de lugar com o 9 da primeira posição.<br><a class="goto" href="#r5-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Selection Sort</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Por que o <strong>Insertion Sort</strong> começa em <code>j = 1</code>?</span></div><div class="hint">clique para revelar</div><div class="fc-a">Porque um único elemento, na posição 0, já forma uma parte ordenada. A partir do segundo, cada nova chave é inserida nessa parte esquerda.<br><a class="goto" href="#r5-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Insertion Sort</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Qual é o papel de <code>key</code> no Insertion e onde ela entra depois do <code>while</code>?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><code>key</code> guarda o valor original enquanto os maiores são deslocados. Ao sair do <code>while</code>, entra em <code>vetor[i+1]</code>.<br><a class="goto" href="#r5-s4" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 04 · Insertion Sort</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Qual é o melhor caso de Bubble sem <code>flag</code>, Selection e Insertion?</span></div><div class="hint">clique para revelar</div><div class="fc-a">Bubble do código: <strong>O(n²)</strong>. Selection: <strong>O(n²)</strong>. Insertion em vetor já ordenado: <strong>O(n)</strong>. Bubble com saída antecipada também pode atingir <strong>O(n)</strong> no melhor caso.<br><a class="goto" href="#r5-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Comparação</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Por que o Selection faz <code>n(n−1)/2</code> comparações mesmo com o vetor ordenado?</span></div><div class="hint">clique para revelar</div><div class="fc-a">Porque ele percorre toda a parte restante para <strong>confirmar</strong> o menor: compara <code>n−1</code>, depois <code>n−2</code>, até 1 elemento, independentemente da ordem inicial.<br><a class="goto" href="#r5-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Selection Sort</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Qual detalhe impede comparar o “antes” e o “depois” nos códigos de Selection e Insertion?</span></div><div class="hint">clique para revelar</div><div class="fc-a">A chamada extra a <code>montar(vetor)</code> recria valores aleatórios depois da primeira impressão. Retire essa chamada para ordenar os mesmos dados que foram mostrados como desordenados.<br><a class="goto" href="#r5-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Código fornecido</a></div></div>
+    </section>
   </div>
 
   <div class="roteiro" id="roteiro-6">
-    <div class="placeholder">
-      <div class="big">○</div>
-      <h2>Roteiro 06 ainda não adicionado</h2>
-      <p>Quando você me passar o material deste roteiro, ele aparece aqui.</p>
-      <p>É só dizer: <code>adiciona o roteiro 6</code> junto com o PDF, link ou transcrição.</p>
-    </div>
+    <h2 class="roteiro-title">Merge Sort: divisão, recursão e intercalação</h2>
+    <p class="roteiro-lead">Resumo do cap. 2 de <em>Estruturas de dados</em> (Ascencio e Araújo), dos slides do Prof. Juliano Varella de Carvalho, do código Java e da videoaula, seguido de flashcards.</p>
+
+    <nav class="secnav">
+      <a href="#r6-s1">1 · Dividir para conquistar</a>
+      <a href="#r6-s2">2 · Chamadas recursivas</a>
+      <a href="#r6-s3">3 · Intercalação</a>
+      <a href="#r6-s4">4 · Código Java</a>
+      <a href="#r6-s5">5 · Custo e comparação</a>
+      <a href="#r6-s6">6 · Atenção ao exemplo</a>
+      <a href="#r6-flash">★ Flashcards</a>
+    </nav>
+
+    <section id="r6-s1">
+      <div class="sec-head"><span class="sec-num">01</span><h2>Dividir para conquistar</h2></div>
+      <p class="lead">O Merge Sort resolve a ordenação em três passos: <strong>dividir</strong> o intervalo em duas metades, <strong>ordenar</strong> cada metade recursivamente e <strong>combinar</strong> as duas metades ordenadas.</p>
+      <table>
+        <thead><tr><th>Etapa</th><th>No Merge Sort</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dividir</strong></td><td>Calcular o meio <code>q</code> e separar os intervalos <code>p..q</code> e <code>q+1..r</code>.</td></tr>
+          <tr><td><strong>Conquistar</strong></td><td>Chamar <code>mergesort</code> para cada intervalo até restar um elemento.</td></tr>
+          <tr><td><strong>Combinar</strong></td><td>Usar <code>merge</code> para intercalar duas partes já ordenadas.</td></tr>
+        </tbody>
+      </table>
+      <p>Uma parte com <strong>um elemento</strong> já está ordenada. A divisão usa o <strong>mesmo vetor original</strong>: <code>p</code>, <code>q</code> e <code>r</code> delimitam partes lógicas. Vetores temporários são criados depois, durante a intercalação.</p>
+      <div class="exam"><span class="tag">Pré-condição do merge</span><p><code>merge(A, p, q, r)</code> só produz a parte <code>A[p..r]</code> ordenada se <strong><code>A[p..q]</code> e <code>A[q+1..r]</code> já estiverem ordenadas</strong>. A recursão garante justamente essa condição.</p></div>
+    </section>
+
+    <section id="r6-s2">
+      <div class="sec-head"><span class="sec-num">02</span><h2>As chamadas recursivas, passo a passo</h2></div>
+      <p class="lead">O código recebe o vetor e os índices <code>p</code> (início) e <code>r</code> (fim). Enquanto <code>p &lt; r</code>, calcula <code>q = (p+r)/2</code> com divisão inteira, ordena a esquerda, ordena a direita e só então intercala.</p>
+      <pre><span class="kw">void</span> mergesort(<span class="kw">int</span>[] A, <span class="kw">int</span> p, <span class="kw">int</span> r) {
+    <span class="kw">if</span> (p &lt; r) {
+        <span class="kw">int</span> q = (p + r) / <span class="num">2</span>;
+        mergesort(A, p, q);       <span class="cmt">// ordena a esquerda</span>
+        mergesort(A, q + <span class="num">1</span>, r);   <span class="cmt">// ordena a direita</span>
+        merge(A, p, q, r);       <span class="cmt">// combina as duas</span>
+    }
+}</pre>
+      <h3>Rastreando <code>[9, 8, 4, 2]</code></h3>
+      <pre>mergesort(A, 0, 3) → q = 1
+  esquerda 0..1 → [9] + [8] → merge → [8, 9]
+  direita  2..3 → [4] + [2] → merge → [2, 4]
+  merge final: [8, 9] + [2, 4] → [2, 4, 8, 9]</pre>
+      <p>Na chamada <code>(0,3)</code>, o meio é <code>(0+3)/2 = 1</code> porque o Java descarta a parte fracionária. A chamada <code>(0,1)</code> divide em <code>(0,0)</code> e <code>(1,1)</code>. Nessas partes <code>p == r</code>, o <code>if</code> é falso: esse é o <strong>caso base</strong>.</p>
+      <p>Como no roteiro 4, cada chamada fica na <strong>pilha de execução</strong> esperando as chamadas menores terminarem. A intercalação começa na volta da recursão: primeiro os pares, depois as metades maiores.</p>
+    </section>
+
+    <section id="r6-s3">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Como intercalar duas partes ordenadas</h2></div>
+      <p class="lead">No código fornecido, <code>merge(A, p, q, r)</code> copia a metade esquerda para <code>L</code> e a direita para <code>R</code>. Dois índices, <code>i</code> e <code>j</code>, indicam o próximo valor de cada metade; <code>k</code> percorre as posições de <code>A[p..r]</code>.</p>
+      <p>Se <code>L[i] &lt;= R[j]</code>, copie o valor da esquerda para <code>A[k]</code> e avance <code>i</code>. Caso contrário, copie o da direita e avance <code>j</code>. A comparação sempre escolhe o <strong>menor valor disponível</strong>, mantendo a saída em ordem.</p>
+      <h3>Exemplo do merge final</h3>
+      <pre>Esquerda L = [8, 9]     Direita R = [2, 4]
+compara 8 e 2 → copia 2
+compara 8 e 4 → copia 4
+direita acabou → copia 8 e 9
+Resultado A[0..3] = [2, 4, 8, 9]</pre>
+      <p>Os slides escrevem <code>MERGE(A, p, q, r)</code> com <code>p ≤ q &lt; r</code>. O código Java guarda um espaço extra em cada vetor temporário: <code>L[n1]</code> e <code>R[n2]</code> recebem <code>Integer.MAX_VALUE</code>. Esses valores funcionam como <em class="term">sentinelas</em>: quando uma metade real acaba, o valor máximo faz a outra metade ser escolhida.</p>
+      <pre><span class="kw">int</span> n1 = q - p + <span class="num">1</span>, n2 = r - q;
+<span class="kw">int</span>[] L = <span class="kw">new int</span>[n1 + <span class="num">1</span>];
+<span class="kw">int</span>[] R = <span class="kw">new int</span>[n2 + <span class="num">1</span>];
+<span class="cmt">// após copiar os valores reais:</span>
+L[n1] = Integer.MAX_VALUE;
+R[n2] = Integer.MAX_VALUE;
+<span class="kw">for</span> (<span class="kw">int</span> k = p; k &lt;= r; k++) {
+    <span class="kw">if</span> (L[i] &lt;= R[j]) A[k] = L[i++];
+    <span class="kw">else</span>              A[k] = R[j++];
+}</pre>
+      <div class="exam"><span class="tag">Limite da sentinela</span><p>O exemplo gera valores de 0 a 99, então <code>Integer.MAX_VALUE</code> é maior que todos eles. Para um vetor de <code>int</code> que possa conter o próprio <code>Integer.MAX_VALUE</code>, essa sentinela não é segura; nesse caso, use uma intercalação que teste explicitamente se <code>i &lt; n1</code> e <code>j &lt; n2</code>.</p></div>
+    </section>
+
+    <section id="r6-s4">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Quem faz o quê no código Java?</h2></div>
+      <table>
+        <thead><tr><th>Parte</th><th>Papel</th></tr></thead>
+        <tbody>
+          <tr><td><code>main</code></td><td>Cria o vetor, mostra os valores e chama <code>mergesort(vetor, 0, vetor.length-1)</code>.</td></tr>
+          <tr><td><code>mergesort(A,p,r)</code></td><td>Divide os intervalos, chama a si mesmo duas vezes e chama <code>merge</code> na volta.</td></tr>
+          <tr><td><code>merge(A,p,q,r)</code></td><td>Intercala duas partes ordenadas usando os vetores temporários <code>L</code> e <code>R</code>.</td></tr>
+          <tr><td><code>montar</code> / <code>imprimir</code></td><td>Geram números aleatórios de 0 a 99 e mostram o vetor; não participam da ordenação.</td></tr>
+        </tbody>
+      </table>
+      <p><code>n1 = q-p+1</code> é a quantidade de elementos à esquerda; <code>n2 = r-q</code> é a quantidade à direita. O <code>+1</code> aparece apenas em <code>n1</code> porque o índice <code>q</code> pertence à metade esquerda.</p>
+      <div class="exam"><span class="tag">Ordem das chamadas</span><p>Se <code>merge</code> fosse executado <strong>antes</strong> das duas chamadas recursivas, ele receberia metades ainda desordenadas e sua pré-condição falharia. A ordem correta é: esquerda, direita, intercalação.</p></div>
+    </section>
+
+    <section id="r6-s5">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Custo e comparação com o roteiro 5</h2></div>
+      <p>Em cada nível da divisão, a intercalação percorre ao todo os <code>n</code> elementos: <strong>O(n)</strong>. Dividir o intervalo ao meio gera cerca de <strong>log₂ n níveis</strong>. Assim, <code>T(n) = 2T(n/2) + O(n)</code> e o tempo total é <strong>O(n log n)</strong> no melhor, médio e pior caso.</p>
+      <table>
+        <thead><tr><th>Algoritmo</th><th>Melhor caso</th><th>Pior caso</th><th>Memória extra</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Bubble do código</strong></td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td></tr>
+          <tr><td><strong>Selection</strong></td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td></tr>
+          <tr><td><strong>Insertion</strong></td><td>O(n)</td><td>O(n²)</td><td>O(1)</td></tr>
+          <tr><td><strong>Merge Sort</strong></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td></tr>
+        </tbody>
+      </table>
+      <p>O Merge Sort precisa de vetores temporários para intercalar, além da pilha recursiva de profundidade <code>O(log n)</code>. O espaço auxiliar total é <strong>O(n)</strong>. Em compensação, seu pior caso cresce mais lentamente que o pior caso quadrático dos algoritmos do roteiro 5. Para poucos dados ou dados quase ordenados, o custo fixo de criar vetores e chamar métodos também importa.</p>
+      <p>Com a condição <code>L[i] &lt;= R[j]</code>, quando dois valores são iguais o algoritmo escolhe primeiro o da metade esquerda. Isso preserva a ordem relativa dos iguais: essa implementação é <strong>estável</strong> para entradas dentro do limite da sentinela.</p>
+    </section>
+
+    <section id="r6-s6">
+      <div class="sec-head"><span class="sec-num">06</span><h2>Dois detalhes do exemplo fornecido</h2></div>
+      <ul>
+        <li>O <code>main</code> chama <code>montar(vetor)</code> <strong>duas vezes</strong>: uma antes de imprimir “DESORDENADO” e outra antes de chamar <code>mergesort</code>. A segunda chamada cria novos valores. Para ver a ordenação do <strong>mesmo</strong> vetor, retire a segunda chamada.</li>
+        <li><code>System.out.println("*********** %s ***********\n" + msg)</code> mostra <code>%s</code> literalmente. Para inserir a mensagem no cabeçalho, use <code>System.out.printf("*********** %s ***********%n", msg)</code>.</li>
+      </ul>
+      <p>O vídeo aumenta temporariamente o vetor para 50.000 elementos para ilustrar o desempenho e depois volta a 10 elementos. Isso é uma demonstração de uma execução; a análise <code>O(n log n)</code> explica por que seu pior caso cresce mais lentamente que o pior caso dos três métodos do roteiro 5.</p>
+    </section>
+
+    <section id="r6-flash">
+      <div class="sec-head"><span class="sec-num">★</span><h2>Flashcards</h2></div>
+      <p class="fc-intro">Leia a pergunta, responda de cabeça, e só então clique para revelar.</p>
+      <div class="fc-controls"><button class="fc-btn" onclick="toggleAll(true)">Abrir todos</button><button class="fc-btn" onclick="toggleAll(false)">Fechar todos</button></div>
+
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Quais são os três passos de <strong>dividir para conquistar</strong> no Merge Sort?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><strong>Dividir</strong> o intervalo ao meio; <strong>conquistar</strong> ordenando cada metade recursivamente; <strong>combinar</strong> por intercalação.<br><a class="goto" href="#r6-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Dividir para conquistar</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>O que significam <code>p</code>, <code>q</code> e <code>r</code>?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><code>p</code> é o início, <code>q</code> é o meio e <code>r</code> é o fim do intervalo. As metades são <code>p..q</code> e <code>q+1..r</code>.<br><a class="goto" href="#r6-s1" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 01 · Dividir para conquistar</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Qual é o <strong>caso base</strong> da função <code>mergesort</code>?</span></div><div class="hint">clique para revelar</div><div class="fc-a">Quando <code>p &gt;= r</code>. O trecho possui um elemento ou está vazio; o teste <code>if (p &lt; r)</code> falha e não há nova chamada recursiva.<br><a class="goto" href="#r6-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Chamadas recursivas</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Para <code>mergesort(A,0,3)</code>, quanto vale <code>q</code> e quais são os dois intervalos?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><code>q = (0+3)/2 = 1</code> na divisão inteira. Os intervalos são <code>0..1</code> e <code>2..3</code>.<br><a class="goto" href="#r6-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Chamadas recursivas</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Em que momento <code>merge(A,p,q,r)</code> é chamado?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><strong>Depois</strong> de ordenar recursivamente a metade esquerda e a direita, na volta das chamadas. Assim, recebe duas partes já ordenadas.<br><a class="goto" href="#r6-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Chamadas recursivas</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Qual pré-condição o <code>merge</code> exige?</span></div><div class="hint">clique para revelar</div><div class="fc-a">As duas partes <code>A[p..q]</code> e <code>A[q+1..r]</code> devem estar <strong>ordenadas</strong> antes da intercalação.<br><a class="goto" href="#r6-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Intercalação</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Como fica <code>[9,8,4,2]</code> após ordenar separadamente as duas metades e antes do merge final?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><code>[8,9,2,4]</code>: esquerda <code>[8,9]</code> e direita <code>[2,4]</code>. O merge final produz <code>[2,4,8,9]</code>.<br><a class="goto" href="#r6-s2" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 02 · Chamadas recursivas</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Para que servem <code>L</code>, <code>R</code>, <code>i</code>, <code>j</code> e <code>k</code>?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><code>L</code> e <code>R</code> guardam cópias das metades; <code>i</code> e <code>j</code> apontam seus próximos valores; <code>k</code> indica a posição a preencher em <code>A</code>.<br><a class="goto" href="#r6-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Intercalação</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Por que as sentinelas recebem <code>Integer.MAX_VALUE</code>?</span></div><div class="hint">clique para revelar</div><div class="fc-a">Elas representam uma metade esgotada: valores reais menores são escolhidos primeiro. A técnica exige que o valor de sentinela seja <strong>maior que qualquer entrada real</strong>; por isso é inadequada se a entrada puder conter o próprio <code>Integer.MAX_VALUE</code>.<br><a class="goto" href="#r6-s3" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 03 · Intercalação</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Qual é o tempo do Merge Sort e por quê?</span></div><div class="hint">clique para revelar</div><div class="fc-a"><strong>O(n log n)</strong>: há cerca de <code>log₂ n</code> níveis de divisão, e a intercalação em cada nível percorre ao todo <code>n</code> elementos.<br><a class="goto" href="#r6-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Custo</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Qual é o custo de memória e por que Merge Sort não é <code>O(1)</code> em espaço?</span></div><div class="hint">clique para revelar</div><div class="fc-a">As metades copiadas para <code>L</code> e <code>R</code> exigem <strong>O(n)</strong> de memória auxiliar; a pilha recursiva acrescenta <code>O(log n)</code>. O total é <strong>O(n)</strong>.<br><a class="goto" href="#r6-s5" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 05 · Custo</a></div></div>
+      <div class="flashcard" onclick="this.classList.toggle('open')"><div class="fc-q"><span class="qmark">Q</span><span>Por que o “DESORDENADO” e o “ORDENADO” do Java podem mostrar conjuntos diferentes?</span></div><div class="hint">clique para revelar</div><div class="fc-a">O <code>main</code> chama <code>montar(vetor)</code> de novo entre as duas impressões. Essa segunda chamada substitui os valores por outros aleatórios antes de ordenar.<br><a class="goto" href="#r6-s6" onclick="event.stopPropagation()"><span class="arrow">→</span> Ver teoria: 06 · Atenção ao exemplo</a></div></div>
+    </section>
   </div>
 
   <footer>
@@ -1788,6 +2045,8 @@ fat(1) = 1  →  fat(2) = 2*1 = 2  →  fat(3) = 3*2 = 6  →  fat(4) = 4*6 = 24
     Fontes do roteiro 02: materiais "Listas Simplesmente Encadeadas" e "Lista Duplamente Encadeada" (Prof. Dr. Juliano Varella de Carvalho) · código-fonte Java fornecido (Aluno, ListaSimplesmenteEncadeada, ListaDuplamenteEncadeada, App) · três videoaulas de detalhamento do código (transcrições).<br>
     Fontes do roteiro 03: apresentações "Pilha (Stack)" e "Fila (Queue)" (Prof. Dr. Juliano Varella de Carvalho), baseadas em JUNIOR, Dilermando P. et al., "Estrutura de Dados e Técnicas de Programação", Elsevier, 2014 · código-fonte Java fornecido (Pilha/Baralho e Fila/Lancheria) · duas videoaulas (transcrições).<br>
     Fontes do roteiro 04: Deitel &amp; Deitel, "Java: Como Programar", 10ª ed., Cap. 18 (Recursão) · código-fonte Java fornecido (PilhaExecucao, Fatorial, Fibonacci, Pesquisa) · quatro videoaulas (transcrições).<br>
+    Fontes do roteiro 05: Ascencio, Ana F. G.; Araújo, Graziela S., <em>Estruturas de dados: algoritmos, análise da complexidade e implementações em Java e C/C++</em>, Pearson, 2010, cap. 2, pp. 21–52 (Bubble, Insertion e Selection Sort) · códigos Java fornecidos (Ordenacao_BubbleSort, Ordenacao_SelectionSort, Ordenacao_InsertionSort) · três videoaulas (transcrições).<br>
+    Fontes do roteiro 06: Ascencio, Ana F. G.; Araújo, Graziela S., <em>Estruturas de dados: algoritmos, análise da complexidade e implementações em Java e C/C++</em>, Pearson, 2010, cap. 2, pp. 53–60 (Merge Sort) · apresentação "Merge Sort" (Prof. Dr. Juliano Varella de Carvalho; referência: Cormen et al., 2012) · código Java fornecido (Ordenacao_MergeSort) · videoaula (transcrição).<br>
     Material de estudo pessoal — não substitui a leitura dos roteiros originais.
   </footer>
 
