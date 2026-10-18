@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#17191c"><meta name="description" content="Programação II da Feevale: componentes gráficos em Java Swing e orientação a objetos. Resumos dos roteiros 1 e 2, exemplos Java e flashcards."><title>Programação II — Material de Estudo</title><style>
+  :root {color-scheme:dark;--ink:#eceef0;--ink-soft:#aeb4bb;--paper:#17191c;--card:#212429;--line:#373c43;--accent:#9bbce0;--accent-ink:#101820;--accent-soft:#273442;--amber:#e5b96f;--amber-soft:#332b20;--code-bg:#111418;--code-ink:#e2e6eb;--mono:'SF Mono','JetBrains Mono','Fira Code',ui-monospace,'Cascadia Code',Menlo,monospace}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 24px 100px}header{padding:56px 0 32px;border-bottom:3px solid var(--ink)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin:0 0 14px}h1{font-size:clamp(32px,5.5vw,46px);line-height:1.05;margin:0 0 12px;font-weight:700;letter-spacing:-.5px}.sub{font-size:17px;color:var(--ink-soft);margin:0;max-width:650px}
+  .tabbar{position:sticky;top:0;z-index:30;background:rgba(23,25,28,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:0 -24px 40px;padding:10px 24px;display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit}.tab,.fc-btn{font-family:var(--mono);font-size:12.5px;background:none;border:1px solid var(--line);color:var(--ink-soft);padding:8px 14px;border-radius:100px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}.tab:hover{border-color:var(--accent);color:var(--accent)}.tab[aria-selected=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .roteiro[hidden]{display:none}.roteiro-title{font-size:clamp(24px,4vw,32px);margin:0 0 6px;letter-spacing:-.3px}.roteiro-lead{font-size:16px;color:var(--ink-soft);margin:0 0 30px}.secnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:36px}.secnav a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--ink-soft);padding:5px 11px;border:1px solid var(--line);border-radius:100px;transition:all .15s}.secnav a:hover{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  section{margin-bottom:56px;scroll-margin-top:85px}.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}.sec-num{font-family:var(--mono);font-size:13px;color:var(--accent-ink);background:var(--accent);padding:3px 9px;border-radius:5px;font-weight:600;flex-shrink:0}h2{font-size:28px;margin:0;letter-spacing:-.3px}h3{font-size:19px;margin:32px 0 10px;color:var(--accent)}p{margin:12px 0}ul,ol{padding-left:22px}li{margin:7px 0}strong{color:var(--ink)}a{color:var(--accent);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}
+  .exam{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 8px 8px 0;padding:16px 20px;margin:20px 0}.exam .tag{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);font-weight:700;display:block;margin-bottom:4px}.exam p{margin:4px 0}
+  pre{background:var(--code-bg);color:var(--code-ink);padding:18px 20px;border-radius:10px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;margin:16px 0;tab-size:4}code{font-family:var(--mono)}p code,li code,td code,.fc-a code{background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:4px;font-size:.88em}.cmt{color:#8b93a5}.kw{color:#c9a0ff}.str{color:#9ece6a}.num{color:#ff9e64}
+  .table-wrap{overflow-x:auto;margin:18px 0;max-width:100%;border-radius:7px}table{width:100%;border-collapse:collapse;font-size:15px}th{text-align:left;background:var(--accent);color:var(--accent-ink);padding:10px 14px;font-family:var(--mono);font-size:12px;letter-spacing:.5px;text-transform:uppercase}td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:none}td code{overflow-wrap:anywhere}p,li{overflow-wrap:break-word}
+  .fc-intro{color:var(--ink-soft);font-size:15px;margin-bottom:20px}.flashcard{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}.flashcard:hover{box-shadow:0 6px 22px rgba(0,0,0,.28);border-color:var(--accent)}.fc-q{padding:18px 22px;display:flex;align-items:flex-start;gap:14px;font-size:16.5px;font-weight:600;cursor:pointer;list-style:none}.fc-q::-webkit-details-marker{display:none}.qmark{font-family:var(--mono);color:var(--accent);font-weight:700;flex-shrink:0}.fc-q .question{flex:1}.fc-q .indicator{font-family:var(--mono);color:var(--ink-soft);font-weight:400;flex-shrink:0}.flashcard[open] .indicator{transform:rotate(45deg)}.fc-a{padding:16px 22px 20px;background:var(--accent-soft);font-size:15.5px;line-height:1.65}.fc-a p{margin:0}.fc-a code{background:var(--card)}.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);display:block;font-weight:400;margin-top:6px;letter-spacing:.3px}.flashcard[open] .hint{display:none}.goto{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:var(--mono);font-size:11.5px;text-decoration:none;color:var(--accent);background:var(--card);border:1px solid var(--accent);padding:6px 12px;border-radius:100px}.goto:hover{background:var(--accent);color:var(--accent-ink)}.fc-controls{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}.fc-btn{font-size:12px;border-color:var(--accent);color:var(--accent)}.fc-btn:hover{background:var(--accent);color:var(--accent-ink)}
+  .source-code{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:12px 0}.source-code>summary{cursor:pointer;padding:14px 18px;color:var(--accent);font-family:var(--mono);font-size:13px}.source-code pre{margin:0;border-radius:0 0 10px 10px}.print-btn{margin-top:18px}.print-note{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:60px;font-size:12px;color:var(--ink-soft);font-family:var(--mono);line-height:1.8}footer p{margin:10px 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.skip-link{position:fixed;top:-100px;left:15px;background:var(--accent);color:var(--accent-ink);padding:10px 18px;z-index:100}.skip-link:focus{top:10px}a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
+  .sr-only{top:0;left:0}.tab.empty{opacity:.6}.placeholder{text-align:center;padding:70px 20px;color:var(--ink-soft)}.placeholder .big{font-size:40px;margin-bottom:16px;opacity:.5}.placeholder h2{font-size:24px;color:var(--ink);margin:0 0 10px}.placeholder p{font-size:16px;max-width:460px;margin:10px auto}.roteiro section,.roteiro{scroll-margin-top:calc(var(--tabbar-height,70px) + 16px)}
+  @media print{.roteiro[data-empty="true"],.roteiro[data-empty="true"][hidden]{display:none!important}}
+  @media(max-width:600px){.wrap{padding:0 18px 60px}header{padding:38px 0 25px}.eyebrow{font-size:10px;letter-spacing:1.8px}.tabbar{margin:0 -18px 30px;padding:10px 18px;gap:7px}.tab{font-size:11px;padding:8px 11px}.sub{font-size:16px}.sec-head{gap:10px}h2{font-size:24px}.sec-num{font-size:12px}section{scroll-margin-top:116px;margin-bottom:44px}.secnav{gap:7px}.secnav a{font-size:10.5px;padding:5px 9px}pre{font-size:12px;padding:16px}table{min-width:500px;font-size:14px}.fc-q{padding:16px;font-size:16px;gap:10px}.fc-a{padding:16px}footer{font-size:11px}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  @media print{:root{color-scheme:light;--ink:#17191c;--ink-soft:#40454c;--paper:#fff;--card:#f5f6f8;--line:#c5cbd2;--accent:#335f89;--accent-ink:#fff;--accent-soft:#edf2f8;--amber:#805715;--amber-soft:#fff7e9;--code-bg:#f2f4f6;--code-ink:#17191c}.wrap{max-width:none;padding:0}.tabbar,.secnav,.fc-controls,.print-btn,.print-note,.goto,.skip-link{display:none!important}.roteiro[hidden]{display:block!important}.roteiro{break-before:page}.roteiro:first-of-type{break-before:auto}header{padding:0 0 20px;margin-bottom:25px}section{margin-bottom:30px}h2,h3,.sec-head{break-after:avoid}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:10px}.table-wrap{overflow:visible}table{min-width:0;font-size:10px}th,td{padding:7px}.kw{color:#61379b}.str{color:#3e662c}.num{color:#8c4b1c}.cmt{color:#626d78}.flashcard{break-inside:avoid}.hint,.indicator{display:none}.fc-q{padding:10px;font-size:13px}.fc-a{padding:10px;font-size:12px}.source-code{break-inside:auto}footer{font-size:9px}}
+</style></head><body><a class="skip-link" href="#conteudo">Pular para o conteúdo</a><div class="wrap"><header><p class="eyebrow">Análise e Desenvolvimento de Sistemas · Feevale</p><h1>Programação II</h1><p class="sub">Material de estudo organizado por roteiro. Cada aba reúne a matéria, exemplos Java e flashcards para testar a memória antes da prova.</p></header><div class="tabbar" role="tablist" aria-label="Roteiros de estudo"><button type="button" class="tab" role="tab" id="tab-1" aria-controls="roteiro-1" aria-selected="true" tabindex="0">01 · Componentes Gráficos</button><button type="button" class="tab" role="tab" id="tab-2" aria-controls="roteiro-2" aria-selected="false" tabindex="-1">02 · Orientação a Objetos</button><button type="button" class="tab empty" role="tab" id="tab-3" aria-controls="roteiro-3" aria-selected="false" tabindex="-1">03 · FeevalePrime</button><button type="button" class="tab empty" role="tab" id="tab-4" aria-controls="roteiro-4" aria-selected="false" tabindex="-1">04 · Arquivos</button><button type="button" class="tab empty" role="tab" id="tab-5" aria-controls="roteiro-5" aria-selected="false" tabindex="-1">05 · Contexto Web</button><button type="button" class="tab empty" role="tab" id="tab-6" aria-controls="roteiro-6" aria-selected="false" tabindex="-1">06 · Java e Banco de Dados</button></div><main id="conteudo"><article class="roteiro" id="roteiro-1" role="tabpanel" aria-labelledby="tab-1" tabindex="0"><h2 class="roteiro-title">Componentes gráficos com Java Swing</h2><p class="roteiro-lead">As nove apresentações do roteiro, da criação do projeto aos componentes, eventos, listas e menus. Conteúdo organizado para revisar e praticar.</p><nav class="secnav" aria-label="Tópicos do roteiro 1"><a href="#r1-s1">1 · Projeto Java</a><a href="#r1-s2">2 · Swing e JFrame</a><a href="#r1-s3">3 · Layouts</a><a href="#r1-s4">4 · Rótulos, campos e botões</a><a href="#r1-s5">5 · JOptionPane</a><a href="#r1-s6">6 · Listeners</a><a href="#r1-s7">7 · Entrada de texto</a><a href="#r1-s8">8 · Seleção</a><a href="#r1-s9">9 · Listas e menus</a><a href="#r1-exemplo">Exemplo completo</a><a href="#r1-revisao">Revisão rápida</a><a href="#r1-fontes">Fontes</a><a href="#r1-flash">★ Flashcards</a></nav><section id="r1-s1"><div class="sec-head"><span class="sec-num">01</span><h2>Criando um projeto Java</h2></div><p>O <strong>workspace</strong> é a pasta de trabalho do Eclipse. Dentro dela, você organiza os projetos da disciplina.</p>
+<p>Sequência apresentada na aula:</p>
+<ol><li>Criar uma pasta para o workspace, como <code>wsFeevale</code>.</li><li>Abrir o Eclipse e selecionar essa pasta.</li><li>Acessar <strong>File &gt; New &gt; Project &gt; Java Project</strong>.</li><li>Dar um nome ao projeto e selecionar o ambiente <strong>JavaSE-1.8</strong>, conforme o material.</li><li>Criar as classes Java dentro do projeto.</li></ol>
+<p>JavaSE-1.8 corresponde ao <strong>Java 8</strong>, versão de referência das apresentações. A aula trabalha inicialmente com projetos Java desktop; projetos Web aparecem mais adiante na disciplina.</p></section><section id="r1-s2"><div class="sec-head"><span class="sec-num">02</span><h2>Introdução ao Java Swing</h2></div><p>Uma <strong>GUI</strong> é uma interface gráfica: janelas, botões, campos e outros controles permitem que o usuário interaja com o programa. Esses controles também são chamados de <strong>componentes</strong> ou <strong>widgets</strong>.</p>
+<p>O <strong>Swing</strong> é a biblioteca usada nas aulas para criar essas interfaces. Ele se apoia no AWT e integra o conjunto <strong>JFC</strong>, que também abrange acessibilidade, gráficos 2D e recursos de arrastar e soltar.</p>
+<h3>JFrame: a janela principal</h3>
+<p><code>JFrame</code> é uma janela de nível superior e pode conter outros componentes. <code>JPanel</code> é um painel usado para agrupar componentes dentro da interface.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Operação</th><th scope="col">Finalidade</th></tr></thead><tbody><tr><td><code>new JFrame(&quot;Título&quot;)</code></td><td>Criar uma janela com título</td></tr><tr><td><code>setSize(500, 200)</code></td><td>Definir largura e altura da janela</td></tr><tr><td><code>add(componente)</code></td><td>Adicionar um componente ao conteúdo da janela</td></tr><tr><td><code>setLayout(...)</code></td><td>Escolher como os componentes serão organizados</td></tr><tr><td><code>setDefaultCloseOperation(...)</code></td><td>Definir o comportamento ao fechar</td></tr><tr><td><code>setVisible(true)</code></td><td>Mostrar a janela</td></tr></tbody></table></div>
+<p>O material também cria classes que <strong>herdam de <code>JFrame</code></strong>. Nesse caso, <code>super(&quot;Título&quot;)</code> chama o construtor da superclasse, e o construtor da nova classe reúne as configurações da janela.</p>
+<h3>O que acontece ao fechar?</h3>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Constante</th><th scope="col">Comportamento</th></tr></thead><tbody><tr><td><code>EXIT_ON_CLOSE</code></td><td>Solicita o encerramento da aplicação por <code>System.exit</code></td></tr><tr><td><code>DISPOSE_ON_CLOSE</code></td><td>Fecha a janela e libera seus recursos de exibição; outras janelas ou tarefas podem continuar</td></tr><tr><td><code>HIDE_ON_CLOSE</code></td><td>Esconde a janela, permitindo mostrá-la novamente</td></tr><tr><td><code>DO_NOTHING_ON_CLOSE</code></td><td>Não executa automaticamente uma ação de fechamento</td></tr></tbody></table></div>
+<aside class="exam"><span class="tag">Ponto de atenção</span><p><strong>Ajuste em relação ao slide:</strong> a diferença entre <code>EXIT_ON_CLOSE</code> e <code>DISPOSE_ON_CLOSE</code> é o encerramento da aplicação versus o descarte da janela. <code>DISPOSE_ON_CLOSE</code> não garante o encerramento de todo o programa. <a href="https://docs.oracle.com/javase/8/docs/api/javax/swing/JFrame.html#setDefaultCloseOperation-int-" target="_blank" rel="noopener noreferrer">Referência: JFrame<span class="sr-only"> (abre em outra aba)</span></a>.</p></aside><h3>As cinco partes do JFC mencionadas na aula</h3><ul><li><strong>AWT:</strong> componentes, infraestrutura de janelas e eventos.</li><li><strong>Swing:</strong> componentes de interface usados nas aplicações do roteiro.</li><li><strong>Accessibility:</strong> suporte a recursos de acessibilidade.</li><li><strong>Java 2D:</strong> desenho, formas, fontes e cores.</li><li><strong>Drag and Drop:</strong> transferência de dados ao arrastar e soltar.</li></ul></section><section id="r1-s3"><div class="sec-head"><span class="sec-num">03</span><h2>Layouts Java Swing</h2></div><p>Um <strong>gerenciador de layout</strong> determina a posição e o tamanho dos componentes. Isso permite que a interface se reorganize quando a janela muda de tamanho.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Layout</th><th scope="col">Como organiza</th><th scope="col">Exemplo de uso</th></tr></thead><tbody><tr><td><code>FlowLayout</code></td><td>Coloca componentes em sequência e quebra a linha quando falta espaço</td><td>Fileira de botões</td></tr><tr><td><code>BorderLayout</code></td><td>Divide o espaço em <code>NORTH</code>, <code>SOUTH</code>, <code>EAST</code>, <code>WEST</code> e <code>CENTER</code></td><td>Barra no topo e conteúdo no centro</td></tr><tr><td><code>GridLayout</code></td><td>Distribui componentes em uma grade de células do mesmo tamanho</td><td>Teclado de calculadora</td></tr><tr><td><code>null</code></td><td>Deixa o posicionamento manual com <code>setBounds</code></td><td>Exemplos com coordenadas fixas</td></tr><tr><td><code>CardLayout</code></td><td>Alterna qual painel fica visível</td><td>Diferentes telas na mesma região</td></tr><tr><td><code>BoxLayout</code></td><td>Organiza componentes em uma linha ou coluna</td><td>Formulário vertical</td></tr><tr><td><code>GridBagLayout</code></td><td>Usa uma grade flexível, com tamanhos e ocupações diferentes</td><td>Formulário mais elaborado</td></tr><tr><td><code>SpringLayout</code></td><td>Posiciona usando relações e restrições entre componentes</td><td>Distâncias entre bordas</td></tr></tbody></table></div>
+<p>Exemplos de trechos usados na configuração de uma janela:</p>
+<pre><code class="language-java">setLayout(<span class="kw">new</span> FlowLayout());
+add(<span class="kw">new</span> JButton(<span class="str">&quot;Salvar&quot;</span>));
+add(<span class="kw">new</span> JButton(<span class="str">&quot;Cancelar&quot;</span>));</code></pre>
+<pre><code class="language-java">setLayout(<span class="kw">new</span> BorderLayout());
+add(<span class="kw">new</span> JButton(<span class="str">&quot;Topo&quot;</span>), BorderLayout.NORTH);
+add(<span class="kw">new</span> JTextArea(), BorderLayout.CENTER);</code></pre>
+<pre><code class="language-java">setLayout(<span class="kw">new</span> GridLayout(<span class="num">2</span>, <span class="num">3</span>));</code></pre>
+<p>O padrão de <code>JPanel</code> é <code>FlowLayout</code>; o painel de conteúdo de <code>JFrame</code> usa <code>BorderLayout</code>. Em uma região de <code>BorderLayout</code>, use um painel para reunir vários componentes.</p>
+<h3>Layout nulo e setBounds</h3>
+<pre><code class="language-java">setLayout(<span class="kw">null</span>);
+campo.setBounds(<span class="num">10</span>, <span class="num">20</span>, <span class="num">180</span>, <span class="num">30</span>);</code></pre>
+<p>A ordem é <strong>x, y, largura, altura</strong>. Nesse exemplo, o campo começa a 10 pixels da esquerda e 20 do topo de seu contêiner, com 180 de largura e 30 de altura. O posicionamento fixo exige mais cuidado ao redimensionar a janela.</p></section><section id="r1-s4"><div class="sec-head"><span class="sec-num">04</span><h2>JLabel, JButton e JTextField</h2></div><div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Componente</th><th scope="col">Função</th><th scope="col">Métodos úteis</th></tr></thead><tbody><tr><td><code>JLabel</code></td><td>Exibir um rótulo ou texto informativo</td><td><code>setText</code>, <code>getText</code></td></tr><tr><td><code>JTextField</code></td><td>Receber texto em uma linha</td><td><code>getText</code>, <code>setText</code></td></tr><tr><td><code>JButton</code></td><td>Permitir que o usuário dispare uma ação</td><td><code>addActionListener</code>, <code>setActionCommand</code></td></tr></tbody></table></div>
+<p>O ciclo básico é <strong>criar o componente, configurá-lo e adicioná-lo ao contêiner</strong>.</p>
+<pre><code class="language-java">JLabel rotulo = <span class="kw">new</span> JLabel(<span class="str">&quot;Nome:&quot;</span>);
+JTextField campo = <span class="kw">new</span> JTextField(<span class="num">20</span>);
+JButton apagar = <span class="kw">new</span> JButton(<span class="str">&quot;Apagar&quot;</span>);
+
+apagar.addActionListener(evento -&gt; campo.setText(<span class="str">&quot;&quot;</span>));</code></pre>
+<p>O <code>20</code> de <code>JTextField(20)</code> indica colunas usadas no cálculo da largura preferida. Ele não limita a entrada a 20 caracteres.</p>
+<p>O botão precisa de um <strong>listener</strong> para executar o comportamento desejado. <code>setActionCommand(&quot;Apague&quot;)</code> atribui um identificador ao evento, que pode ser consultado com <code>getActionCommand()</code>. O comando, sozinho, não implementa a ação.</p></section><section id="r1-s5"><div class="sec-head"><span class="sec-num">05</span><h2>Conhecendo o JOptionPane</h2></div><p><code>JOptionPane</code> fornece caixas de diálogo prontas. Nos usos apresentados, os diálogos são <strong>modais</strong>: enquanto estão abertos, bloqueiam a interação com a janela à qual se aplicam.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Método</th><th scope="col">Uso</th></tr></thead><tbody><tr><td><code>showMessageDialog</code></td><td>Mostrar uma mensagem</td></tr><tr><td><code>showInputDialog</code></td><td>Solicitar uma entrada</td></tr><tr><td><code>showConfirmDialog</code></td><td>Pedir confirmação e retornar a opção escolhida</td></tr><tr><td><code>showOptionDialog</code></td><td>Configurar opções e botões com maior flexibilidade</td></tr></tbody></table></div>
+<pre><code class="language-java">JOptionPane.showMessageDialog(
+    <span class="kw">null</span>, <span class="str">&quot;Cadastro salvo!&quot;</span>, <span class="str">&quot;Aviso&quot;</span>, JOptionPane.INFORMATION_MESSAGE
+);</code></pre>
+<p>O primeiro argumento indica o componente de referência. Com <code>null</code>, não se informa um componente pai; com a própria janela, o diálogo se relaciona a ela. Há variantes do método com título, tipo de mensagem e ícone personalizado: isso exemplifica <strong>sobrecarga</strong>.</p>
+<p>Tipos de mensagem: <code>PLAIN_MESSAGE</code>, <code>INFORMATION_MESSAGE</code>, <code>WARNING_MESSAGE</code>, <code>QUESTION_MESSAGE</code> e <code>ERROR_MESSAGE</code>.</p>
+<h3>Entrada e conversão</h3>
+<p>Na forma textual usada na aula, <code>showInputDialog</code> retorna uma <code>String</code>, ou <code>null</code> se houver cancelamento. Para calcular com o valor, é necessário convertê-lo.</p>
+<pre><code class="language-java">String entrada = JOptionPane.showInputDialog(<span class="kw">null</span>, <span class="str">&quot;Informe sua idade:&quot;</span>);
+
+<span class="kw">if</span> (entrada != <span class="kw">null</span>) {
+    <span class="kw">try</span> {
+        <span class="kw">int</span> idade = Integer.parseInt(entrada);
+        JOptionPane.showMessageDialog(<span class="kw">null</span>, <span class="str">&quot;Próxima idade: &quot;</span> + (idade + <span class="num">1</span>));
+    } <span class="kw">catch</span> (NumberFormatException erro) {
+        JOptionPane.showMessageDialog(<span class="kw">null</span>, <span class="str">&quot;Digite um número inteiro válido.&quot;</span>);
+    }
+}</code></pre>
+<p>A verificação de cancelamento e o tratamento de entrada inválida foram acrescentados ao exemplo para evitar falhas.</p>
+<h3>Confirmação</h3>
+<pre><code class="language-java"><span class="kw">int</span> resposta = JOptionPane.showConfirmDialog(
+    <span class="kw">null</span>, <span class="str">&quot;Deseja continuar?&quot;</span>, <span class="str">&quot;Confirmação&quot;</span>, JOptionPane.YES_NO_OPTION
+);
+
+<span class="kw">if</span> (resposta == JOptionPane.YES_OPTION) {
+    <span class="cmt">// Executar a ação confirmada.</span>
+}</code></pre>
+<aside class="exam"><span class="tag">Ponto de atenção</span><p><strong>Não confundir:</strong> <code>YES_NO_OPTION</code> e <code>YES_NO_CANCEL_OPTION</code> configuram os botões disponíveis. <code>YES_OPTION</code>, <code>NO_OPTION</code>, <code>CANCEL_OPTION</code> e <code>CLOSED_OPTION</code> são resultados possíveis da interação. Essa distinção está misturada na lista de constantes do slide. <a href="https://docs.oracle.com/javase/8/docs/api/javax/swing/JOptionPane.html" target="_blank" rel="noopener noreferrer">Referência: JOptionPane<span class="sr-only"> (abre em outra aba)</span></a>.</p></aside></section><section id="r1-s6"><div class="sec-head"><span class="sec-num">06</span><h2>Entendendo os listeners</h2></div><p>Um <strong>evento</strong> descreve uma interação, como clicar ou digitar. Um <strong>listener</strong> é um objeto registrado para receber eventos e executar um método em resposta.</p>
+<p>Fluxo: <strong>usuário interage → componente gera evento → listener recebe o evento → método executa uma ação</strong>.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Listener</th><th scope="col">Métodos principais</th><th scope="col">O que observa</th></tr></thead><tbody><tr><td><code>ActionListener</code></td><td><code>actionPerformed</code></td><td>Ações, como ativar um botão</td></tr><tr><td><code>KeyListener</code></td><td><code>keyPressed</code>, <code>keyReleased</code>, <code>keyTyped</code></td><td>Teclado</td></tr><tr><td><code>MouseListener</code></td><td><code>mouseClicked</code>, <code>mouseEntered</code>, <code>mouseExited</code>, <code>mousePressed</code>, <code>mouseReleased</code></td><td>Cliques, entrada e saída do mouse</td></tr><tr><td><code>ItemListener</code></td><td><code>itemStateChanged</code></td><td>Mudanças de seleção</td></tr><tr><td><code>ListSelectionListener</code></td><td><code>valueChanged</code></td><td>Mudanças de seleção em listas</td></tr></tbody></table></div>
+<p>As apresentações mostram diferentes formas de criar um listener: a própria classe implementa a interface, uma classe interna implementa a interface ou uma classe anônima é criada no registro do listener. Para <code>ActionListener</code>, também é possível usar uma <strong>lambda</strong>, como nos exemplos reduzidos deste resumo.</p>
+<aside class="exam"><span class="tag">Ponto de atenção</span><p><strong>Ajuste conceitual:</strong> os listeners AWT listados não herdam todos de <code>WindowListener</code>; essas interfaces se baseiam em <code>java.util.EventListener</code>. <code>WindowListener</code> é específico para eventos de janela. <a href="https://docs.oracle.com/javase/8/docs/api/java/awt/event/WindowListener.html" target="_blank" rel="noopener noreferrer">Referência: WindowListener<span class="sr-only"> (abre em outra aba)</span></a>.</p></aside>
+<p><code>mouseReleased</code> e <code>mouseClicked</code> podem coexistir. No exemplo da aula, ambos alteram a cor do campo em sequência; por isso, uma alteração pode substituir visualmente a outra. Caixas modais dentro dos eventos de teclado também podem mudar o foco e dificultar a observação da sequência de eventos.</p><h3>Outros listeners apresentados</h3><div class="table-wrap" role="region" aria-label="Outros listeners" tabindex="0"><table><thead><tr><th>Listener</th><th>Evento observado</th></tr></thead><tbody><tr><td><code>AdjustmentListener</code></td><td>Ajuste de um valor, como em uma barra de rolagem</td></tr><tr><td><code>ComponentListener</code></td><td>Mudanças de tamanho, posição ou visibilidade de um componente</td></tr><tr><td><code>ContainerListener</code></td><td>Adição ou remoção de componentes em um contêiner</td></tr><tr><td><code>FocusListener</code></td><td>Ganho ou perda de foco</td></tr><tr><td><code>TextListener</code></td><td>Mudança de texto em componentes AWT que oferecem esse evento</td></tr><tr><td><code>WindowListener</code></td><td>Abertura, fechamento e outras mudanças de estado de janela</td></tr></tbody></table></div><p>Movimento do mouse e rolagem têm listeners próprios: <code>MouseMotionListener</code> e <code>MouseWheelListener</code>. O roteiro os menciona, mas não desenvolve exemplos completos.</p></section><section id="r1-s7"><div class="sec-head"><span class="sec-num">07</span><h2>Mais sobre entrada de texto</h2></div><h3>Estados do campo</h3>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Configuração</th><th scope="col">Resultado</th></tr></thead><tbody><tr><td><code>setVisible(false)</code></td><td>O componente deixa de aparecer</td></tr><tr><td><code>setEnabled(false)</code></td><td>O componente fica desabilitado</td></tr><tr><td><code>setEditable(false)</code></td><td>O texto não pode ser alterado pelo usuário; o campo pode continuar habilitado</td></tr></tbody></table></div>
+<h3>JPasswordField</h3>
+<p>É um campo de senha que herda de <code>JTextField</code> e oculta os caracteres na exibição. O símbolo mostrado depende da aparência configurada. Para obter a senha, usa-se <code>getPassword()</code>, que retorna um vetor de caracteres.</p>
+<h3>JTextArea</h3>
+<p>Permite texto em várias linhas. <code>getText()</code> obtém o conteúdo, <code>setText()</code> substitui e <code>append()</code> acrescenta texto.</p>
+<pre><code class="language-java">JTextArea area = <span class="kw">new</span> JTextArea(<span class="num">5</span>, <span class="num">30</span>);
+area.setText(<span class="str">&quot;Primeira linha&quot;</span>);
+area.append(<span class="str">&quot;\nSegunda linha&quot;</span>);</code></pre>
+<p>Nesse construtor, os argumentos representam <strong>linhas e colunas</strong>, usados no tamanho preferido. Para rolagem, coloque a área em um <code>JScrollPane</code>.</p>
+<h3>Bordas</h3>
+<p><code>BorderFactory</code> cria bordas, aplicadas por <code>setBorder()</code>:</p>
+<pre><code class="language-java">area.setBorder(BorderFactory.createCompoundBorder(
+    BorderFactory.createTitledBorder(<span class="str">&quot;Observações&quot;</span>),
+    BorderFactory.createEtchedBorder()
+));</code></pre>
+<p><code>createTitledBorder</code> cria uma borda com título; <code>createEtchedBorder</code> cria um efeito de relevo; <code>createCompoundBorder</code> combina duas bordas.</p></section><section id="r1-s8"><div class="sec-head"><span class="sec-num">08</span><h2>Mais componentes: seleção</h2></div><div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Componente</th><th scope="col">Quando usar</th></tr></thead><tbody><tr><td><code>JCheckBox</code></td><td>Opções independentes, que podem estar marcadas simultaneamente</td></tr><tr><td><code>JRadioButton</code> + <code>ButtonGroup</code></td><td>Opções mutuamente exclusivas</td></tr><tr><td><code>JComboBox</code></td><td>Escolha em uma lista suspensa, ocupando menos espaço</td></tr></tbody></table></div>
+<p>O <code>ButtonGroup</code> gerencia a exclusividade, mas não desenha os botões. Cada <code>JRadioButton</code> deve ser adicionado também ao painel ou à janela. Um grupo pode começar sem seleção; depois de selecionar uma opção, a seleção de outra substitui a anterior.</p>
+<pre><code class="language-java">JRadioButton arial = <span class="kw">new</span> JRadioButton(<span class="str">&quot;Arial&quot;</span>, <span class="kw">true</span>);
+JRadioButton verdana = <span class="kw">new</span> JRadioButton(<span class="str">&quot;Verdana&quot;</span>);
+
+ButtonGroup grupo = <span class="kw">new</span> ButtonGroup();
+grupo.add(arial);
+grupo.add(verdana);</code></pre>
+<p>Métodos frequentes: <code>isSelected()</code> consulta um checkbox ou radio button; <code>getSelectedItem()</code> obtém a escolha de um combo; <code>getSelectedIndex()</code> retorna sua posição.</p>
+<p><code>ItemListener</code> recebe mudanças de seleção e pode receber eventos de <strong>desmarcação e marcação</strong>. Quando a ação deve ocorrer apenas ao selecionar, verifique <code>evento.getStateChange() == ItemEvent.SELECTED</code>, como faz o exemplo de <code>JComboBox</code> da aula.</p></section><section id="r1-s9"><div class="sec-head"><span class="sec-num">09</span><h2>JList e JMenuBar</h2></div><h3>JList</h3>
+<p>Exibe itens em uma lista. <code>JScrollPane</code> fornece rolagem quando necessário. <code>setVisibleRowCount</code> participa do cálculo da altura preferida; não limita a quantidade total de itens.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Modo de seleção</th><th scope="col">Permite</th></tr></thead><tbody><tr><td><code>SINGLE_SELECTION</code></td><td>Um item</td></tr><tr><td><code>SINGLE_INTERVAL_SELECTION</code></td><td>Um intervalo contínuo de itens</td></tr><tr><td><code>MULTIPLE_INTERVAL_SELECTION</code></td><td>Itens ou intervalos separados</td></tr></tbody></table></div>
+<p>Use <code>getSelectedValue()</code> para obter um item e <code>getSelectedValuesList()</code> para obter os selecionados. Sem seleção, <code>getSelectedIndex()</code> retorna <code>-1</code>; verifique isso antes de usar o índice em um vetor.</p>
+<h3>JMenuBar</h3>
+<p>A estrutura é <strong><code>JMenuBar</code> → <code>JMenu</code> → <code>JMenuItem</code></strong>: barra, menu e opção acionável.</p>
+<pre><code class="language-java">JMenuBar barra = <span class="kw">new</span> JMenuBar();
+JMenu arquivo = <span class="kw">new</span> JMenu(<span class="str">&quot;Arquivo&quot;</span>);
+JMenuItem sair = <span class="kw">new</span> JMenuItem(<span class="str">&quot;Sair&quot;</span>);
+
+sair.addActionListener(evento -&gt; dispose());
+arquivo.add(sair);
+barra.add(arquivo);
+setJMenuBar(barra);</code></pre>
+<p>Esse trecho fica dentro de uma classe que herda de <code>JFrame</code>. As opções usam <code>ActionListener</code>, assim como os botões. No material, os menus alteram a cor e a fonte de um campo de texto.</p></section><section id="r1-exemplo"><div class="sec-head"><span class="sec-num">+</span><h2>Exemplo integrado: campo e botão</h2></div><p>Exemplo didático completo que reúne janela, layout, rótulo, campo, botão, listener e diálogo. Salve como <code>ExemploSwing.java</code>.</p>
+<pre><code class="language-java"><span class="kw">import</span> java.awt.FlowLayout;
+<span class="kw">import</span> javax.swing.*;
+
+<span class="kw">public</span> <span class="kw">class</span> ExemploSwing <span class="kw">extends</span> JFrame {
+    <span class="kw">private</span> <span class="kw">final</span> JTextField nome = <span class="kw">new</span> JTextField(<span class="num">20</span>);
+
+    <span class="kw">public</span> ExemploSwing() {
+        <span class="kw">super</span>(<span class="str">&quot;Exemplo de cadastro&quot;</span>);
+        setLayout(<span class="kw">new</span> FlowLayout());
+
+        add(<span class="kw">new</span> JLabel(<span class="str">&quot;Nome:&quot;</span>));
+        add(nome);
+
+        JButton mostrar = <span class="kw">new</span> JButton(<span class="str">&quot;Mostrar&quot;</span>);
+        mostrar.addActionListener(evento -&gt; {
+            JOptionPane.showMessageDialog(
+                <span class="kw">this</span>, <span class="str">&quot;Nome informado: &quot;</span> + nome.getText()
+            );
+        });
+        add(mostrar);
+
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        pack();
+        setLocationRelativeTo(<span class="kw">null</span>);
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> main(String[] args) {
+        SwingUtilities.invokeLater(() -&gt; {
+            <span class="kw">new</span> ExemploSwing().setVisible(<span class="kw">true</span>);
+        });
+    }
+}</code></pre>
+<p><code>pack()</code> dimensiona a janela pelos tamanhos preferidos dos componentes. <code>SwingUtilities.invokeLater</code> agenda a criação da interface na thread de eventos do Swing; é um complemento de boa prática aos exemplos das apresentações.</p></section><section id="r1-revisao"><div class="sec-head"><span class="sec-num">↺</span><h2>Revisão rápida</h2></div><ul><li><strong>Janela:</strong> <code>JFrame</code>; <strong>painel:</strong> <code>JPanel</code>.</li><li><strong>Exibir texto:</strong> <code>JLabel</code>; <strong>receber uma linha:</strong> <code>JTextField</code>; <strong>várias linhas:</strong> <code>JTextArea</code>.</li><li><strong>Executar ação:</strong> <code>JButton</code> com <code>ActionListener</code>.</li><li><strong>Mostrar mensagem ou pedir dados:</strong> <code>JOptionPane</code>.</li><li><strong>Posicionar automaticamente:</strong> gerenciador de layout; <strong>manualmente:</strong> <code>null</code> e <code>setBounds</code>.</li><li><strong>Escolhas independentes:</strong> <code>JCheckBox</code>; <strong>exclusivas:</strong> <code>JRadioButton</code> com <code>ButtonGroup</code>.</li><li><strong>Lista suspensa:</strong> <code>JComboBox</code>; <strong>lista visível:</strong> <code>JList</code>.</li><li><strong>Menus:</strong> <code>JMenuBar</code>, <code>JMenu</code> e <code>JMenuItem</code>.</li></ul>
+<p>O roteiro 2 explica a orientação a objetos que sustenta esses exemplos: herdar de <code>JFrame</code>, implementar <code>ActionListener</code>, chamar métodos de objetos e usar diferentes versões de métodos sobrecarregados.</p></section><section id="r1-fontes"><div class="sec-head"><span class="sec-num">↗</span><h2>Fontes</h2></div><p><a href="https://feevale.grupoa.education/plataforma/course/5607074/content/94858618" target="_blank" rel="noopener noreferrer">Roteiro 1 na plataforma<span class="sr-only"> (abre em outra aba)</span></a>. Apresentações consultadas, com cópias na pasta <code>fontes</code> do pacote:</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Apresentação</th><th scope="col">Páginas</th><th scope="col">PDF</th></tr></thead><tbody><tr><td>Criando um projeto Java</td><td>11</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/9c686d33-4175-4f9c-90e7-d2e91071b52e.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr><tr><td>Introdução ao Java Swing</td><td>18</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/ddd5ea82-56ec-454b-96fe-4e0733c8731a.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr><tr><td>Layouts Java Swing</td><td>18</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/03584892-60b3-4eae-a43c-34b445d6a9ee.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr><tr><td>JLabel, JButton e JTextField</td><td>15</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/51ebd4ad-c086-4843-8ac7-6ee9d4f3e71e.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr><tr><td>Conhecendo o JOptionPane</td><td>21</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/d4902f62-9e52-4753-9e96-ec7bed9c7f9b.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr><tr><td>Entendendo os Listeners</td><td>17</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/fb223faa-937a-4ad5-8faf-6892c4f73964.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr><tr><td>Mais sobre entrada de texto</td><td>14</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/6629023e-fc68-4f0a-a50f-a47c4db4e4f3.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr><tr><td>Mais componentes</td><td>13</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/1ab1b1b3-00c3-4016-bec0-ff71080eee6f.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr><tr><td>O JList e JMenuBar</td><td>17</td><td><a href="https://static.plataforma.grupoa.education/feevale/feevale/f41abc6f-b723-4107-b969-f4530d8c797f.pdf" target="_blank" rel="noopener noreferrer">Original<span class="sr-only"> (abre em outra aba)</span></a></td></tr></tbody></table></div>
+<p>Os esclarecimentos sinalizados no texto usam a documentação oficial do Java. Exemplos adicionais são adaptações didáticas, não transcrições literais dos slides.</p></section><section id="r1-flash"><div class="sec-head"><span class="sec-num">★</span><h2>Flashcards</h2></div>
+<p class="fc-intro">Leia a pergunta, tente responder de cabeça e clique para revelar. Cada resposta tem um atalho para voltar à teoria.</p>
+<div class="fc-controls"><button class="fc-btn" type="button" data-flash-action="open" data-target="r1-flash">Abrir todos</button><button class="fc-btn" type="button" data-flash-action="close" data-target="r1-flash">Fechar todos</button></div>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que é uma GUI e qual é o papel do Swing?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>GUI é uma interface gráfica. Swing fornece componentes Java para construir janelas, campos, botões e outras partes de uma interface desktop.</p><a class="goto" href="#r1-s2">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Workspace e projeto Java são a mesma coisa?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. O workspace é a pasta de trabalho do Eclipse, que organiza os projetos. O projeto contém as classes e demais recursos da aplicação.</p><a class="goto" href="#r1-s1">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Qual a diferença entre JFrame e JPanel?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>JFrame</code> é uma janela de nível superior. <code>JPanel</code> é um painel para agrupar componentes dentro da interface.</p><a class="goto" href="#r1-s2">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Qual é a diferença entre setSize e setBounds?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>setSize(largura, altura)</code> define o tamanho. <code>setBounds(x, y, largura, altura)</code> também define a posição do componente em seu contêiner.</p><a class="goto" href="#r1-s3">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">EXIT_ON_CLOSE e DISPOSE_ON_CLOSE fazem a mesma coisa?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>EXIT_ON_CLOSE</code> solicita o encerramento da aplicação. <code>DISPOSE_ON_CLOSE</code> descarta a janela e libera seus recursos de exibição; outras janelas ou tarefas podem continuar.</p><a class="goto" href="#r1-s2">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Como FlowLayout, BorderLayout e GridLayout organizam os componentes?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>FlowLayout</code>: sequência com quebra de linha. <code>BorderLayout</code>: cinco regiões. <code>GridLayout</code>: grade com células do mesmo tamanho.</p><a class="goto" href="#r1-s3">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Quais são as cinco regiões do BorderLayout?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>NORTH</code>, <code>SOUTH</code>, <code>EAST</code>, <code>WEST</code> e <code>CENTER</code>. Para colocar vários componentes em uma região, agrupe-os em um painel.</p><a class="goto" href="#r1-s3">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">JLabel e JTextField têm a mesma função?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>JLabel</code> mostra um rótulo. <code>JTextField</code> recebe texto em uma linha.</p><a class="goto" href="#r1-s4">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">new JTextField(20) limita a digitação a 20 caracteres?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. O número indica colunas usadas no cálculo da largura preferida; não é um limite de caracteres.</p><a class="goto" href="#r1-s4">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Como ler, substituir e apagar o texto de um campo?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>getText()</code> lê; <code>setText(&quot;novo texto&quot;)</code> substitui; <code>setText(&quot;&quot;)</code> apaga.</p><a class="goto" href="#r1-s4">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">setActionCommand(&quot;Apague&quot;) já faz o botão apagar o campo?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. Ele identifica o comando do evento. Um <code>ActionListener</code> precisa executar a ação, por exemplo, <code>campo.setText(&quot;&quot;)</code>.</p><a class="goto" href="#r1-s4">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Quais são os quatro métodos principais do JOptionPane?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>showMessageDialog</code>: mensagem; <code>showInputDialog</code>: entrada; <code>showConfirmDialog</code>: confirmação; <code>showOptionDialog</code>: opções personalizadas.</p><a class="goto" href="#r1-s5">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que verificar antes de converter a entrada de showInputDialog?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Verifique se a entrada é <code>null</code> por cancelamento. Depois, trate possíveis erros na conversão, como <code>NumberFormatException</code> em <code>Integer.parseInt</code>.</p><a class="goto" href="#r1-s5">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">YES_NO_OPTION é igual a YES_OPTION?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>São usados em papéis diferentes: <code>YES_NO_OPTION</code> configura os botões disponíveis; <code>YES_OPTION</code> identifica a resposta afirmativa retornada.</p><a class="goto" href="#r1-s5">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Qual é o fluxo básico de tratamento de eventos?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Usuário interage → componente gera evento → listener recebe → método de tratamento executa a ação.</p><a class="goto" href="#r1-s6">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Quais são os três métodos do KeyListener?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>keyPressed</code>, <code>keyReleased</code> e <code>keyTyped</code>: pressionar, soltar e produzir um caractere digitado.</p><a class="goto" href="#r1-s6">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Quais são os cinco métodos do MouseListener?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>mouseClicked</code>, <code>mouseEntered</code>, <code>mouseExited</code>, <code>mousePressed</code> e <code>mouseReleased</code>.</p><a class="goto" href="#r1-s6">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Todos os listeners herdam de WindowListener?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. Os listeners AWT citados se baseiam em <code>java.util.EventListener</code>. <code>WindowListener</code> trata especificamente eventos de janela.</p><a class="goto" href="#r1-s6">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Como diferenciar visible, enabled e editable?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>visible</code>: aparecer; <code>enabled</code>: estar habilitado; <code>editable</code>: permitir a edição do texto pelo usuário.</p><a class="goto" href="#r1-s7">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que representam os números em new JTextArea(5, 30)?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Cinco linhas e trinta colunas, usados no tamanho preferido. Não são diretamente medidas em pixels.</p><a class="goto" href="#r1-s7">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que muda no JPasswordField e como obter seu conteúdo?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Ele oculta os caracteres na exibição. <code>getPassword()</code> retorna um vetor de caracteres.</p><a class="goto" href="#r1-s7">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Quando usar JCheckBox e quando usar JRadioButton?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>JCheckBox</code>: escolhas independentes. <code>JRadioButton</code> com <code>ButtonGroup</code>: escolhas mutuamente exclusivas.</p><a class="goto" href="#r1-s8">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">ButtonGroup desenha os radio buttons na janela?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. Ele controla a exclusividade. Os botões também precisam ser adicionados ao painel ou à janela.</p><a class="goto" href="#r1-s8">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Por que testar ItemEvent.SELECTED em um ItemListener?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Uma mudança pode gerar eventos de desmarcação e marcação. O teste executa a ação apenas no evento de seleção.</p><a class="goto" href="#r1-s8">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Quais modos de seleção uma JList oferece?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>SINGLE_SELECTION</code>: um item; <code>SINGLE_INTERVAL_SELECTION</code>: intervalo contínuo; <code>MULTIPLE_INTERVAL_SELECTION</code>: itens e intervalos separados.</p><a class="goto" href="#r1-s9">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que significa getSelectedIndex() retornar -1?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Nenhum item está selecionado. É necessário verificar isso antes de usar o índice em um vetor.</p><a class="goto" href="#r1-s9">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Qual a função de JScrollPane?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Fornecer uma área com rolagem para um componente, como <code>JList</code> ou <code>JTextArea</code>.</p><a class="goto" href="#r1-s9">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Como se organiza uma barra de menu?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>JMenuBar</code> contém objetos <code>JMenu</code>; cada menu contém opções <code>JMenuItem</code>. As opções podem usar <code>ActionListener</code>.</p><a class="goto" href="#r1-s9">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Como criar uma borda com título e combinar duas bordas?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>BorderFactory.createTitledBorder</code> cria uma borda com título. <code>createCompoundBorder</code> combina duas bordas; <code>setBorder</code> aplica o resultado ao componente.</p><a class="goto" href="#r1-s7">→ Ver teoria</a></div></details></section></article>
+<article class="roteiro" id="roteiro-2" role="tabpanel" aria-labelledby="tab-2" tabindex="0" hidden><h2 class="roteiro-title">Orientação a objetos em Java</h2><p class="roteiro-lead">Classes, objetos, encapsulamento, relações, herança, interfaces e polimorfismo. Inclui os exemplos Java fornecidos na aula.</p><nav class="secnav" aria-label="Tópicos do roteiro 2"><a href="#r2-s1">1 · Classes e objetos</a><a href="#r2-s2">2 · Métodos static</a><a href="#r2-s3">3 · Encapsulamento</a><a href="#r2-s4">4 · Relações</a><a href="#r2-s5">5 · Herança</a><a href="#r2-s6">6 · Sobrecarga</a><a href="#r2-s7">7 · Sobrescrita</a><a href="#r2-s8">8 · Interfaces</a><a href="#r2-s9">9 · Polimorfismo</a><a href="#r2-s10">10 · Outros polimorfismos</a><a href="#r2-arquivos">Arquivos da aula</a><a href="#r2-revisao">Revisão rápida</a><a href="#r2-fontes">Fontes</a><a href="#r2-codigos">{ } Códigos completos</a><a href="#r2-flash">★ Flashcards</a></nav><section id="r2-s1"><div class="sec-head"><span class="sec-num">01</span><h2>Classes, objetos, atributos e métodos</h2></div><p>Uma <strong>classe</strong> define uma estrutura e seus comportamentos. Um <strong>objeto</strong> é uma instância dessa classe.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Conceito</th><th scope="col">Significado</th><th scope="col">Exemplo</th></tr></thead><tbody><tr><td>Classe</td><td>Especificação dos objetos</td><td><code>Aluno</code></td></tr><tr><td>Objeto</td><td>Uma instância concreta</td><td>Um aluno criado com <code>new Aluno()</code></td></tr><tr><td>Atributo</td><td>Dado que compõe o estado</td><td>Nome, matrícula</td></tr><tr><td>Método</td><td>Operação ou comportamento</td><td>Alterar nome, calcular média</td></tr></tbody></table></div>
+<p>O material caracteriza um objeto por <strong>identidade</strong>, <strong>estado</strong> e <strong>comportamento</strong>. Objetos diferentes podem ter o mesmo estado: dois alunos podem ter o mesmo nome sem serem o mesmo objeto.</p>
+<pre><code class="language-java"><span class="kw">class</span> Aluno {
+    <span class="kw">private</span> String nome;
+
+    <span class="kw">public</span> <span class="kw">void</span> setNome(String nome) {
+        <span class="kw">this</span>.nome = nome;
+    }
+
+    <span class="kw">public</span> String getNome() {
+        <span class="kw">return</span> nome;
+    }
+}</code></pre>
+<p><code>this.nome</code> identifica o atributo do objeto atual; <code>nome</code>, à direita da atribuição, é o parâmetro recebido pelo método.</p></section><section id="r2-s2"><div class="sec-head"><span class="sec-num">02</span><h2>Métodos de classe e métodos de objeto</h2></div><div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Tipo</th><th scope="col">Característica</th><th scope="col">Chamada do material</th></tr></thead><tbody><tr><td>De classe (<code>static</code>)</td><td>Pode ser chamado sem criar uma instância da classe</td><td><code>Math.sqrt(4)</code></td></tr><tr><td>De instância</td><td>É chamado sobre um objeto</td><td><code>a.intValue()</code></td></tr></tbody></table></div>
+<pre><code class="language-java"><span class="kw">double</span> raiz = Math.sqrt(<span class="num">4</span>); <span class="cmt">// 2.0</span>
+
+Integer a = <span class="num">4</span>;
+<span class="kw">int</span> valor = a.intValue();   <span class="cmt">// 4</span></code></pre>
+<p>Os membros <code>static</code> pertencem à classe. Atributos de instância compõem o estado de cada objeto. Um método estático não tem <code>this</code> e não acessa diretamente atributos de instância sem uma referência a um objeto.</p>
+<p>No arquivo <code>Aplicacao.java</code> da aula, <code>Math.sqrt(4)</code> é chamado, mas seu resultado não é armazenado nem impresso. A saída mostrada pelo <code>println</code> é somente <code>4</code>.</p></section><section id="r2-s3"><div class="sec-head"><span class="sec-num">03</span><h2>Encapsulamento</h2></div><p><strong>Encapsular</strong> é reunir estado e comportamento e controlar como outras partes do programa acessam esse estado.</p>
+<p>No exemplo da aula, <code>valor</code> é <code>private</code>; o acesso externo acontece por <code>getValor()</code> e <code>setValor()</code>. Isso permite concentrar regras de alteração em um lugar.</p>
+<pre><code class="language-java"><span class="kw">class</span> Encapsulamento {
+    <span class="kw">private</span> <span class="kw">double</span> valor;
+
+    <span class="kw">public</span> <span class="kw">double</span> getValor() {
+        <span class="kw">return</span> valor;
+    }
+
+    <span class="kw">public</span> <span class="kw">void</span> setValor(<span class="kw">double</span> valor) {
+        <span class="kw">if</span> (valor &gt; <span class="num">10</span>) {
+            <span class="kw">throw</span> <span class="kw">new</span> IllegalArgumentException(<span class="str">&quot;O valor deve ser no máximo 10.&quot;</span>);
+        }
+        <span class="kw">this</span>.valor = valor;
+    }
+}</code></pre>
+<p>A validação acima adapta a regra sugerida pelo professor no vídeo; o arquivo fornecido apenas atribui o valor. O ponto central é <strong>controlar a alteração</strong>. Getters e setters são recursos possíveis; não é obrigatório oferecer um setter para todo atributo.</p></section><section id="r2-s4"><div class="sec-head"><span class="sec-num">04</span><h2>Associação, agregação e composição</h2></div><p>São formas de representar relações entre objetos. Agregação e composição são relações de todo e parte.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Relação</th><th scope="col">Ideia central</th><th scope="col">Exemplo da aula</th><th scope="col">Representação UML</th></tr></thead><tbody><tr><td>Associação</td><td>Objetos se relacionam ou um utiliza o outro</td><td>Automóvel utiliza uma rodovia</td><td>Linha; seta pode indicar navegabilidade</td></tr><tr><td>Agregação</td><td>Uma parte tem existência independente do todo</td><td>Automóvel e buzina</td><td>Losango vazio no lado do todo</td></tr><tr><td>Composição</td><td>A parte pertence ao todo e seu ciclo de vida depende dele no modelo</td><td>Livro e seus capítulos cadastrados</td><td>Losango preenchido no lado do todo</td></tr></tbody></table></div>
+<p>No exemplo de composição, excluir o livro implica excluir seus capítulos daquele cadastro. Na agregação, a buzina pode continuar existindo separadamente.</p>
+<p>Essas relações descrevem o <strong>modelo do sistema</strong>. Declarar um atributo Java, sozinho, não implementa automaticamente todas as regras de ciclo de vida da composição.</p></section><section id="r2-s5"><div class="sec-head"><span class="sec-num">05</span><h2>Herança</h2></div><p>Permite definir uma classe a partir de outra. A classe original é a <strong>superclasse</strong> ou classe base; a que herda é a <strong>subclasse</strong> ou classe derivada. A palavra-chave é <code>extends</code>.</p>
+<p>Exemplo reduzido dos arquivos da aula:</p>
+<pre><code class="language-java"><span class="kw">class</span> ClasseBase {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">int</span> soma(<span class="kw">int</span> x, <span class="kw">int</span> y) {
+        <span class="kw">return</span> x + y;
+    }
+}
+
+<span class="kw">class</span> ClasseDerivada <span class="kw">extends</span> ClasseBase {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">int</span> produto(<span class="kw">int</span> x, <span class="kw">int</span> y) {
+        <span class="kw">return</span> x * y;
+    }
+}</code></pre>
+<pre><code class="language-java"><span class="kw">int</span> soma = ClasseDerivada.soma(<span class="num">5</span>, <span class="num">6</span>);       <span class="cmt">// 11</span>
+<span class="kw">int</span> produto = ClasseDerivada.produto(<span class="num">5</span>, <span class="num">6</span>); <span class="cmt">// 30</span></code></pre>
+<p><code>soma</code> vem da classe base; <code>produto</code> foi definido na derivada. Como ambos são estáticos nesse exemplo, não é preciso instanciar um objeto.</p>
+<p>Java permite que uma classe tenha <strong>uma única superclasse direta</strong>. Uma classe pode implementar várias interfaces.</p>
+<p>Na UML, a herança é representada por uma linha com <strong>triângulo vazio apontando para a superclasse</strong>.</p></section><section id="r2-s6"><div class="sec-head"><span class="sec-num">06</span><h2>Sobrecarga de métodos - overloading</h2></div><p>Ocorre quando há métodos com o <strong>mesmo nome e listas de parâmetros diferentes</strong>. Pode mudar a quantidade, os tipos ou a ordem dos tipos dos parâmetros.</p>
+<pre><code class="language-java"><span class="kw">class</span> SobrecarregandoMetodos {
+    <span class="kw">public</span> <span class="kw">int</span> dobra(<span class="kw">int</span> x) {
+        <span class="kw">return</span> <span class="num">2</span> * x;
+    }
+
+    <span class="kw">public</span> <span class="kw">double</span> dobra(<span class="kw">double</span> x) {
+        <span class="kw">return</span> <span class="num">2.0</span> * x;
+    }
+
+    <span class="kw">public</span> <span class="kw">double</span> dobra(<span class="kw">int</span> x, <span class="kw">int</span> y) {
+        <span class="kw">return</span> <span class="num">2</span> * (x + y);
+    }
+}</code></pre>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Chamada</th><th scope="col">Resultado</th><th scope="col">Versão selecionada</th></tr></thead><tbody><tr><td><code>dobra(3)</code></td><td><code>6</code></td><td>Um <code>int</code></td></tr><tr><td><code>dobra(3.5)</code></td><td><code>7.0</code></td><td>Um <code>double</code></td></tr><tr><td><code>dobra(2, 3)</code></td><td><code>10.0</code></td><td>Dois <code>int</code></td></tr></tbody></table></div>
+<p>A escolha da sobrecarga é feita na compilação, considerando os tipos dos argumentos e as regras da linguagem. <strong>Mudar somente o tipo de retorno não cria uma sobrecarga válida.</strong></p></section><section id="r2-s7"><div class="sec-head"><span class="sec-num">07</span><h2>Sobrescrita de métodos - overriding</h2></div><p>A subclasse fornece uma nova implementação para um método de instância herdado, mantendo uma assinatura compatível.</p>
+<pre><code class="language-java"><span class="kw">class</span> ClasseBase2 {
+    <span class="kw">public</span> <span class="kw">void</span> escreveTitulo() {
+        System.out.println(<span class="str">&quot;Feevale&quot;</span>);
+    }
+}
+
+<span class="kw">class</span> ClasseDerivada2 <span class="kw">extends</span> ClasseBase2 {
+    @Override
+    <span class="kw">public</span> <span class="kw">void</span> escreveTitulo() {
+        System.out.println(<span class="str">&quot;Universidade Feevale&quot;</span>);
+    }
+}</code></pre>
+<p>Uma instância de <code>ClasseDerivada2</code> executa a implementação da derivada. <code>@Override</code> ajuda o compilador a verificar que o método realmente sobrescreve outro.</p>
+<aside class="exam"><span class="tag">Ponto de atenção</span><p><strong>Diferença para memorizar:</strong> sobrecarga muda os parâmetros; sobrescrita muda o comportamento herdado. Métodos <code>static</code> não são sobrescritos como métodos de instância: uma declaração estática correspondente pode ocultar a anterior.</p></aside></section><section id="r2-s8"><div class="sec-head"><span class="sec-num">08</span><h2>Interfaces</h2></div><p>Uma interface define um <strong>contrato</strong> que pode ser atendido por classes diferentes. O material usa a ideia de um <code>Voador</code>:</p>
+<pre><code class="language-java"><span class="kw">interface</span> Voador {
+    <span class="kw">void</span> levantaVoo();
+    <span class="kw">void</span> plana();
+    <span class="kw">void</span> pousa();
+}</code></pre>
+<p>Uma classe concreta que declara <code>implements Voador</code> deve fornecer ou herdar implementações para esses métodos abstratos. Nos métodos acima, <code>public abstract</code> é implícito. A implementação na classe precisa ser <code>public</code>.</p>
+<p>Uma interface não pode ser instanciada diretamente e não tem construtor. É possível usar seu tipo em uma variável que referencia um objeto de uma classe implementadora.</p>
+<p>No roteiro 1, isso já aparece em <code>implements ActionListener</code>: a classe atende ao contrato implementando <code>actionPerformed</code>.</p>
+<aside class="exam"><span class="tag">Ponto de atenção</span><p><strong>Esclarecimento de versão:</strong> a afirmação dos slides de que interfaces só têm métodos sem implementação é uma simplificação. No <strong>Java 8</strong>, interfaces também podem declarar métodos <code>default</code> e <code>static</code> com corpo. <strong>Métodos privados em interfaces</strong> existem a partir do Java 9; não são aceitos no JavaSE-1.8 indicado pelo roteiro 1. Os campos de interface são constantes <code>public static final</code>, não atributos de instância privados. <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.4" target="_blank" rel="noopener noreferrer">Referência: interfaces na especificação Java<span class="sr-only"> (abre em outra aba)</span></a>.</p></aside></section><section id="r2-s9"><div class="sec-head"><span class="sec-num">09</span><h2>Polimorfismo</h2></div><p>Significa trabalhar com um mesmo tipo comum e obter comportamentos diferentes conforme o objeto concreto. O exemplo central da aula usa <strong>figuras geométricas</strong>.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Figura</th><th scope="col">Área</th><th scope="col">Perímetro</th></tr></thead><tbody><tr><td>Círculo</td><td><code>π × raio²</code></td><td><code>2 × π × raio</code></td></tr><tr><td>Quadrado</td><td><code>lado²</code></td><td><code>4 × lado</code></td></tr><tr><td>Triângulo</td><td><code>base × altura / 2</code></td><td>Soma dos três lados</td></tr></tbody></table></div>
+<p>Todas podem oferecer <code>calculaArea()</code> e <code>calculaPerimetro()</code>, cada uma com sua implementação. Isso pode ser organizado por herança ou por interface.</p>
+<p>Exemplo adaptado com interface, mostrando apenas a área:</p>
+<pre><code class="language-java"><span class="kw">interface</span> Figura {
+    <span class="kw">double</span> calculaArea();
+}
+
+<span class="kw">class</span> Quadrado <span class="kw">implements</span> Figura {
+    <span class="kw">private</span> <span class="kw">final</span> <span class="kw">double</span> lado;
+
+    Quadrado(<span class="kw">double</span> lado) {
+        <span class="kw">this</span>.lado = lado;
+    }
+
+    @Override
+    <span class="kw">public</span> <span class="kw">double</span> calculaArea() {
+        <span class="kw">return</span> lado * lado;
+    }
+}
+
+<span class="kw">class</span> Circulo <span class="kw">implements</span> Figura {
+    <span class="kw">private</span> <span class="kw">final</span> <span class="kw">double</span> raio;
+
+    Circulo(<span class="kw">double</span> raio) {
+        <span class="kw">this</span>.raio = raio;
+    }
+
+    @Override
+    <span class="kw">public</span> <span class="kw">double</span> calculaArea() {
+        <span class="kw">return</span> Math.PI * raio * raio;
+    }
+}</code></pre>
+<pre><code class="language-java">Figura figura = <span class="kw">new</span> Quadrado(<span class="num">4</span>);
+System.out.println(figura.calculaArea()); <span class="cmt">// 16.0</span>
+
+figura = <span class="kw">new</span> Circulo(<span class="num">2</span>);
+System.out.println(figura.calculaArea()); <span class="cmt">// aproximadamente 12.57</span></code></pre>
+<p>A variável continua sendo do tipo <code>Figura</code>; o método executado depende do objeto. Não é preciso escolher a fórmula com vários <code>if</code> espalhados pelo programa.</p>
+<aside class="exam"><span class="tag">Ponto de atenção</span><p><strong>Esclarecimento:</strong> o polimorfismo por subtipos não exige uma superclasse abstrata. Ela é uma possibilidade; também pode haver uma superclasse concreta ou uma interface.</p></aside></section><section id="r2-s10"><div class="sec-head"><span class="sec-num">10</span><h2>Outros tipos de polimorfismo citados</h2></div><div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Tipo</th><th scope="col">Como aparece no material</th></tr></thead><tbody><tr><td>Por sobrecarga</td><td>Mesmo nome de método com parâmetros diferentes</td></tr><tr><td>Por coerção</td><td>Conversão entre tipos</td></tr><tr><td>Paramétrico</td><td>Definições genéricas que operam sobre diferentes tipos</td></tr></tbody></table></div>
+<p>O roteiro cita ainda polimorfismo estrutural e de linha, sem desenvolvê-los nas apresentações.</p>
+<h3>Conversão de tipos</h3>
+<pre><code class="language-java"><span class="kw">float</span> x = <span class="num">10.7f</span>;
+<span class="kw">int</span> y = (<span class="kw">int</span>) x; <span class="cmt">// 10</span></code></pre>
+<p>O cast para <code>int</code> descarta a parte fracionária nesse exemplo; não arredonda para o inteiro mais próximo. Foi acrescentado o sufixo <code>f</code> que falta no slide: <code>10.7</code> sem sufixo é um literal <code>double</code>. <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.2" target="_blank" rel="noopener noreferrer">Referência: literais de ponto flutuante<span class="sr-only"> (abre em outra aba)</span></a>.</p>
+<h3>Método genérico</h3>
+<pre><code class="language-java"><span class="kw">public</span> <span class="kw">static</span> &lt;E&gt; <span class="kw">void</span> escreve(E[] vetor) {
+    <span class="kw">for</span> (E elemento : vetor) {
+        System.out.println(elemento);
+    }
+}</code></pre>
+<p><code>E</code> representa um tipo de referência. O método pode receber, por exemplo, <code>String[]</code> ou <code>Integer[]</code>. Não recebe diretamente <code>int[]</code> nessa forma. Seu retorno é <code>void</code>: ele percorre e imprime os elementos, não retorna um vetor.</p></section><section id="r2-arquivos"><div class="sec-head"><span class="sec-num">+</span><h2>Como os arquivos da aula se relacionam</h2></div><div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Arquivo</th><th scope="col">Conceito demonstrado</th></tr></thead><tbody><tr><td><code>Aplicacao.java</code></td><td>Método de classe versus método de instância</td></tr><tr><td><code>Encapsulamento.java</code></td><td>Atributo privado e métodos de acesso</td></tr><tr><td><code>ClasseBase.java</code></td><td>Método estático <code>soma</code></td></tr><tr><td><code>ClasseDerivada.java</code></td><td>Herança e método estático <code>produto</code></td></tr><tr><td><code>Aplicacao2.java</code></td><td>Chamada de métodos definidos na base e na derivada</td></tr><tr><td><code>SobrecarregandoMetodos.java</code></td><td>Sobrecarga de <code>dobra</code></td></tr><tr><td><code>ClasseBase2.java</code></td><td>Implementação original de <code>escreveTitulo</code></td></tr><tr><td><code>ClasseDerivada2.java</code></td><td>Sobrescrita de <code>escreveTitulo</code></td></tr></tbody></table></div>
+<p><code>Aplicacao2.java</code> não imprime resultados: primeiro atribui <code>30</code> a <code>n</code> e depois substitui esse valor por <code>11</code>.</p></section><section id="r2-revisao"><div class="sec-head"><span class="sec-num">↺</span><h2>Revisão rápida</h2></div><div class="table-wrap" role="region" aria-label="Tabela de comparação" tabindex="0"><table><thead><tr><th scope="col">Pergunta</th><th scope="col">Conceito</th></tr></thead><tbody><tr><td>O que define os atributos e métodos?</td><td>Classe</td></tr><tr><td>O que é uma instância concreta?</td><td>Objeto</td></tr><tr><td>O que controla o acesso e a alteração do estado?</td><td>Encapsulamento</td></tr><tr><td>O que estabelece uma relação de especialização?</td><td>Herança</td></tr><tr><td>O que define um contrato de comportamentos?</td><td>Interface</td></tr><tr><td>Mesmo nome, parâmetros diferentes?</td><td>Sobrecarga</td></tr><tr><td>Nova implementação de método de instância herdado?</td><td>Sobrescrita</td></tr><tr><td>Mesmo tipo comum, execução conforme o objeto?</td><td>Polimorfismo por subtipos</td></tr><tr><td>Parte independente do todo?</td><td>Agregação</td></tr><tr><td>Parte com ciclo de vida vinculado ao todo no modelo?</td><td>Composição</td></tr></tbody></table></div></section><section id="r2-fontes"><div class="sec-head"><span class="sec-num">↗</span><h2>Fontes</h2></div><ul><li><a href="https://feevale.grupoa.education/plataforma/course/5607074/content/94858611" target="_blank" rel="noopener noreferrer">Roteiro 2 na plataforma<span class="sr-only"> (abre em outra aba)</span></a>.</li><li><a href="https://static.plataforma.grupoa.education/feevale/feevale/21b719ba-084e-446b-9f63-1000eddaa5e6.pdf" target="_blank" rel="noopener noreferrer">Apresentação: Conceitos de Orientação a Objetos - Parte 1, 18 páginas<span class="sr-only"> (abre em outra aba)</span></a>.</li><li><a href="https://static.plataforma.grupoa.education/feevale/feevale/be014fc5-0140-493c-bc6e-c676c65d319a.pdf" target="_blank" rel="noopener noreferrer">Apresentação: Conceitos de Orientação a Objetos - Parte 2, 20 páginas<span class="sr-only"> (abre em outra aba)</span></a>.</li><li><a href="https://www.youtube.com/watch?v=Io9kHQMoHm0" target="_blank" rel="noopener noreferrer">Videoaula: Parte 1<span class="sr-only"> (abre em outra aba)</span></a>, <a href="https://www.youtube.com/watch?v=D9Ir6f3iMNA" target="_blank" rel="noopener noreferrer">Parte 2<span class="sr-only"> (abre em outra aba)</span></a> e <a href="https://www.youtube.com/watch?v=Gp_erYqlmzE" target="_blank" rel="noopener noreferrer">demonstração dos exemplos<span class="sr-only"> (abre em outra aba)</span></a>, consultadas por transcrições automáticas e conferidas com slides e códigos.</li><li><a href="https://static.plataforma.grupoa.education/feevale/feevale/a8309c9e-73d8-4289-b3fb-f38b3935cdfa.zip" target="_blank" rel="noopener noreferrer">Fontes Java fornecidos no roteiro<span class="sr-only"> (abre em outra aba)</span></a>.</li></ul>
+<p>As cópias das duas apresentações estão na pasta <code>fontes</code> do pacote. Os esclarecimentos de versão e correções pontuais estão sinalizados no texto e vinculados à documentação oficial.</p></section><section id="r2-codigos"><div class="sec-head"><span class="sec-num">{ }</span><h2>Códigos fornecidos no roteiro</h2></div><p>Os oito arquivos Java do roteiro 2, preservados como exemplos da aula. Abra um arquivo para consultar a implementação completa.</p><details class="source-code"><summary>Aplicacao.java</summary><pre><code class="language-java"><span class="cmt">/** 
+
+ * Universidade Feevale
+
+ * Roteiro R2_1 Orientação a Objetos
+
+ */</span>
+
+<span class="kw">public</span> <span class="kw">class</span> Aplicacao {
+
+	<span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> main(String[] args) {
+
+		
+
+		Math.sqrt(<span class="num">4</span>);
+
+		Integer a = <span class="num">4</span>;
+
+		System.out.println( a.intValue() );
+
+	}
+
+}</code></pre></details><details class="source-code"><summary>Aplicacao2.java</summary><pre><code class="language-java"><span class="cmt">/** 
+
+ * Universidade Feevale
+
+ * Roteiro R2_5 Orientação a Objetos
+
+ */</span>
+
+<span class="kw">public</span> <span class="kw">class</span> Aplicacao2 {
+
+	<span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> main(String[] args) {
+
+		<span class="kw">int</span> n = ClasseDerivada.produto(<span class="num">5</span>, <span class="num">6</span>);
+
+		n = ClasseDerivada.soma(<span class="num">5</span>, <span class="num">6</span>);
+
+		<span class="cmt">// n = ClasseDerivada.</span>
+
+	}
+
+}</code></pre></details><details class="source-code"><summary>ClasseBase.java</summary><pre><code class="language-java"><span class="cmt">/** 
+
+ * Universidade Feevale
+
+ * Roteiro R2_3 Orientação a Objetos
+
+ */</span>
+
+<span class="kw">public</span> <span class="kw">class</span> ClasseBase {
+
+	
+
+	<span class="kw">public</span> <span class="kw">static</span> <span class="kw">int</span> soma( <span class="kw">int</span> x, <span class="kw">int</span> y ) {
+
+		<span class="kw">return</span>( x + y );
+
+	}
+
+}</code></pre></details><details class="source-code"><summary>ClasseBase2.java</summary><pre><code class="language-java"><span class="cmt">/** 
+
+ * Universidade Feevale
+
+ * Roteiro R2_7 Orientação a Objetos
+
+ */</span>
+
+<span class="kw">public</span> <span class="kw">class</span> ClasseBase2 {
+
+	
+
+	<span class="kw">public</span> <span class="kw">void</span> escreveTitulo() {
+
+		System.out.println( <span class="str">&quot;Feevale&quot;</span>);
+
+	}
+
+}</code></pre></details><details class="source-code"><summary>ClasseDerivada.java</summary><pre><code class="language-java"><span class="cmt">/** 
+
+ * Universidade Feevale
+
+ * Roteiro R2_4 Orientação a Objetos
+
+ */</span>
+
+<span class="kw">public</span> <span class="kw">class</span> ClasseDerivada <span class="kw">extends</span> ClasseBase {
+
+	<span class="kw">public</span> <span class="kw">static</span> <span class="kw">int</span> produto( <span class="kw">int</span> x, <span class="kw">int</span> y ) {
+
+		<span class="kw">return</span>( x * y );
+
+	}
+
+}</code></pre></details><details class="source-code"><summary>ClasseDerivada2.java</summary><pre><code class="language-java"><span class="cmt">/** 
+
+ * Universidade Feevale
+
+ * Roteiro R2_8 Orientação a Objetos
+
+ */</span>
+
+<span class="kw">public</span> <span class="kw">class</span> ClasseDerivada2 <span class="kw">extends</span> ClasseBase2 {
+
+	<span class="kw">public</span> <span class="kw">void</span> escreveTitulo() {
+
+		System.out.println( <span class="str">&quot;Universidade Feevale&quot;</span>);
+
+	}
+
+}</code></pre></details><details class="source-code"><summary>Encapsulamento.java</summary><pre><code class="language-java"><span class="cmt">/** 
+
+ * Universidade Feevale
+
+ * Roteiro R2_2 Orientação a Objetos
+
+ */</span>
+
+<span class="kw">public</span> <span class="kw">class</span> Encapsulamento {
+
+	<span class="kw">private</span> <span class="kw">double</span> valor;
+
+	<span class="cmt">// Aqui voce pode controlar a forma de acessar esse valor</span>
+
+	<span class="kw">public</span> <span class="kw">double</span> getValor() {
+
+		<span class="kw">return</span> valor;
+
+	}
+
+	<span class="cmt">// Aqui voce determinar as condições para permitir a alteração desse atributo</span>
+
+	<span class="kw">public</span> <span class="kw">void</span> setValor(<span class="kw">double</span> valor) {
+
+		<span class="kw">this</span>.valor = valor;
+
+	}
+
+	
+
+}</code></pre></details><details class="source-code"><summary>SobrecarregandoMetodos.java</summary><pre><code class="language-java"><span class="cmt">/** 
+
+ * Universidade Feevale
+
+ * Roteiro R2_6 Orientação a Objetos
+
+ */</span>
+
+<span class="kw">public</span> <span class="kw">class</span> SobrecarregandoMetodos {
+
+	
+
+	<span class="kw">public</span> <span class="kw">int</span> dobra( <span class="kw">int</span> x ) {
+
+		<span class="kw">return</span>( <span class="num">2</span> * x );
+
+	}
+
+	
+
+	<span class="kw">public</span> <span class="kw">double</span> dobra( <span class="kw">double</span> x ) {
+
+		<span class="kw">return</span>( <span class="num">2.0</span> * x );
+
+	}	
+
+	<span class="kw">public</span> <span class="kw">double</span> dobra( <span class="kw">int</span> x, <span class="kw">int</span> y ) {
+
+		<span class="kw">return</span>( <span class="num">2</span> * ( x + y ) );
+
+	}	
+
+	
+
+}</code></pre></details></section><section id="r2-flash"><div class="sec-head"><span class="sec-num">★</span><h2>Flashcards</h2></div>
+<p class="fc-intro">Leia a pergunta, tente responder de cabeça e clique para revelar. Cada resposta tem um atalho para voltar à teoria.</p>
+<div class="fc-controls"><button class="fc-btn" type="button" data-flash-action="open" data-target="r2-flash">Abrir todos</button><button class="fc-btn" type="button" data-flash-action="close" data-target="r2-flash">Fechar todos</button></div>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Qual a diferença entre classe e objeto?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Classe é a especificação dos atributos e comportamentos. Objeto é uma instância concreta dessa classe.</p><a class="goto" href="#r2-s1">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Quais são as três características de um objeto?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Identidade, estado e comportamento. Dois objetos podem ter o mesmo estado e continuar sendo objetos diferentes.</p><a class="goto" href="#r2-s1">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Atributo e método representam o quê?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Atributo compõe o estado; método define uma operação ou comportamento.</p><a class="goto" href="#r2-s1">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que significa this.valor = valor?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>this.valor</code> é o atributo do objeto atual. <code>valor</code>, à direita, é o parâmetro recebido pelo método.</p><a class="goto" href="#r2-s1">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">É necessário criar um objeto para usar Math.sqrt(4)?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. <code>sqrt</code> é um método estático da classe <code>Math</code>; pode ser chamado diretamente pela classe.</p><a class="goto" href="#r2-s2">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Por que a.intValue() é um método de instância?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Porque é chamado sobre o objeto referenciado por <code>a</code>, recuperando seu valor inteiro.</p><a class="goto" href="#r2-s2">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Qual é o objetivo do encapsulamento?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Controlar o acesso e a alteração do estado do objeto, concentrando regras nos comportamentos que a classe disponibiliza.</p><a class="goto" href="#r2-s3">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Toda classe precisa oferecer um setter para cada atributo?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. A classe expõe apenas as operações necessárias. Um atributo pode não permitir alteração externa.</p><a class="goto" href="#r2-s3">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Qual é a diferença entre associação, agregação e composição?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Associação: relação ou uso. Agregação: todo e parte com existência independente. Composição: parte com ciclo de vida vinculado ao todo no modelo.</p><a class="goto" href="#r2-s4">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O atributo de uma classe implementa sozinho uma composição?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. A composição expressa regras de propriedade e ciclo de vida do modelo; o programa precisa respeitar essas regras.</p><a class="goto" href="#r2-s4">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Na UML, para onde aponta o triângulo da herança?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Para a superclasse. O triângulo é vazio; agregação e composição usam losangos no lado do todo.</p><a class="goto" href="#r2-s5">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Java permite que uma classe herde diretamente de duas classes?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. Uma classe tem uma única superclasse direta, mas pode implementar várias interfaces.</p><a class="goto" href="#r2-s5">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Qual palavra-chave representa herança e qual representa implementação de interface?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>extends</code> indica herança de classe. <code>implements</code> declara que a classe implementa uma ou mais interfaces.</p><a class="goto" href="#r2-s5">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que caracteriza uma sobrecarga de métodos?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Mesmo nome, com listas de parâmetros diferentes em quantidade, tipos ou ordem dos tipos.</p><a class="goto" href="#r2-s6">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Mudar somente o retorno cria uma sobrecarga?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. O tipo de retorno, sozinho, não diferencia duas sobrecargas válidas.</p><a class="goto" href="#r2-s6">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">No exemplo da aula, quanto devolve dobra(2, 3)?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p><code>10.0</code>: essa versão retorna o dobro da soma dos dois argumentos e tem retorno <code>double</code>.</p><a class="goto" href="#r2-s6">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que caracteriza a sobrescrita de métodos?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>A subclasse fornece uma nova implementação para um método de instância herdado, com assinatura compatível.</p><a class="goto" href="#r2-s7">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Para que serve @Override?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Ajuda o compilador a verificar que o método está de fato sobrescrevendo outro.</p><a class="goto" href="#r2-s7">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Métodos static são sobrescritos como métodos de instância?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. Uma declaração estática correspondente pode ocultar o método anterior; não há a mesma seleção dinâmica de implementação.</p><a class="goto" href="#r2-s7">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que uma interface representa?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Um contrato de comportamentos. Uma classe concreta implementadora precisa fornecer ou herdar implementações para seus métodos abstratos.</p><a class="goto" href="#r2-s8">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">É possível instanciar diretamente uma interface?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. Uma variável do tipo da interface pode referenciar um objeto de uma classe que a implementa.</p><a class="goto" href="#r2-s8">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">No Java 8, uma interface pode ter método com corpo?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Sim. Pode declarar métodos <code>default</code> e <code>static</code> com implementação. Métodos privados em interfaces aparecem a partir do Java 9.</p><a class="goto" href="#r2-s8">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que faz Figura figura = new Quadrado(4) ser um exemplo de polimorfismo?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>A referência usa o tipo comum <code>Figura</code>, enquanto a execução de <code>calculaArea()</code> usa o comportamento do objeto <code>Quadrado</code>.</p><a class="goto" href="#r2-s9">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Uma superclasse abstrata é obrigatória para polimorfismo por subtipos?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não. Ele pode usar uma superclasse concreta, uma superclasse abstrata ou uma interface.</p><a class="goto" href="#r2-s9">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Como diferem as áreas de círculo, quadrado e triângulo?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Círculo: π × raio². Quadrado: lado². Triângulo: base × altura / 2. O mesmo nome de método pode corresponder a cada uma dessas implementações.</p><a class="goto" href="#r2-s9">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Por que escrever float x = 10.7f e qual o resultado de (int) x?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>O sufixo <code>f</code> torna o literal <code>float</code>. Nesse exemplo, o cast resulta em <code>10</code>, descartando a parte fracionária.</p><a class="goto" href="#r2-s10">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">Um método &lt;E&gt; void escreve(E[] vetor) recebe int[]?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não nessa forma. Ele recebe vetores de tipos por referência, como <code>Integer[]</code> e <code>String[]</code>. O retorno é <code>void</code>, não um vetor.</p><a class="goto" href="#r2-s10">→ Ver teoria</a></div></details>
+<details class="flashcard"><summary class="fc-q"><span class="qmark" aria-hidden="true">Q</span><span class="question">O que Aplicacao2.java imprime e qual é o valor final de n?<span class="hint">clique ou pressione Enter para revelar</span></span><span class="indicator" aria-hidden="true">+</span></summary><div class="fc-a"><p>Não imprime nada. Primeiro atribui o produto, <code>30</code>, a <code>n</code>; depois substitui esse valor pela soma, <code>11</code>.</p><a class="goto" href="#r2-arquivos">→ Ver teoria</a></div></details></section></article><article class="roteiro" id="roteiro-3" role="tabpanel" aria-labelledby="tab-3" tabindex="0" data-empty="true" hidden><div class="placeholder"><div class="big" aria-hidden="true">○</div><h2>Desenvolvendo a aplicação FeevalePrime</h2><p>Roteiro 03 ainda não adicionado.</p><p>Este espaço fica reservado para o resumo e os flashcards quando o material deste roteiro for incluído.</p></div></article><article class="roteiro" id="roteiro-4" role="tabpanel" aria-labelledby="tab-4" tabindex="0" data-empty="true" hidden><div class="placeholder"><div class="big" aria-hidden="true">○</div><h2>Trabalhando com arquivos</h2><p>Roteiro 04 ainda não adicionado.</p><p>Este espaço fica reservado para o resumo e os flashcards quando o material deste roteiro for incluído.</p></div></article><article class="roteiro" id="roteiro-5" role="tabpanel" aria-labelledby="tab-5" tabindex="0" data-empty="true" hidden><div class="placeholder"><div class="big" aria-hidden="true">○</div><h2>Contexto Web</h2><p>Roteiro 05 ainda não adicionado.</p><p>Este espaço fica reservado para o resumo e os flashcards quando o material deste roteiro for incluído.</p></div></article><article class="roteiro" id="roteiro-6" role="tabpanel" aria-labelledby="tab-6" tabindex="0" data-empty="true" hidden><div class="placeholder"><div class="big" aria-hidden="true">○</div><h2>Java e Banco de Dados</h2><p>Roteiro 06 ainda não adicionado.</p><p>Este espaço fica reservado para o resumo e os flashcards quando o material deste roteiro for incluído.</p></div></article></main><footer><p><strong>Fontes do roteiro 01:</strong> nove apresentações sobre componentes gráficos, Prof. Dr. Ricardo Ferreira de Oliveira — 144 páginas. Foram usadas apenas as apresentações, conforme a seleção de material.</p><p><strong>Fontes do roteiro 02:</strong> apresentações “Conceitos de Orientação a Objetos”, partes 1 e 2 — 38 páginas; oito arquivos Java; três videoaulas consultadas por transcrição e conferidas com os slides e os códigos.</p><p>Os exemplos adicionais são adaptações didáticas. Diferenças de versão e correções pontuais estão identificadas junto da teoria. As fontes originais e a documentação oficial estão vinculadas em cada roteiro.</p><p>Material de estudo pessoal · Programação II · Feevale · 18/10/2026</p><button type="button" class="fc-btn print-btn" id="print-button">Imprimir / salvar em PDF</button><p class="print-note">A impressão reúne os dois roteiros e revela as respostas dos flashcards.</p></footer></div><script>
+(() => {
+  'use strict';
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  const panels = [...document.querySelectorAll('[role="tabpanel"]')];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const tabbar = document.querySelector('.tabbar');
+  const updateTabbarHeight = () => document.documentElement.style.setProperty('--tabbar-height', Math.ceil(tabbar.getBoundingClientRect().height) + 'px');
+  new ResizeObserver(updateTabbarHeight).observe(tabbar);
+  updateTabbarHeight();
+  function activate(id, changeHash = false, focusTab = false) {
+    const panel = document.getElementById(id);
+    if (!panel || !panels.includes(panel)) return;
+    for (const item of panels) item.hidden = item !== panel;
+    for (const tab of tabs) {
+      const selected = tab.getAttribute('aria-controls') === id;
+      tab.setAttribute('aria-selected', String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      if (selected && focusTab) tab.focus();
+    }
+    if (changeHash) {
+      history.pushState(null, '', '#' + id);
+      document.querySelector('.tabbar').scrollIntoView({behavior: reducedMotion.matches ? 'auto' : 'smooth', block:'start'});
+    }
+  }
+  function followHash() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = document.getElementById(id);
+    if (!target) return;
+    const panel = target.matches('[role="tabpanel"]') ? target : target.closest('[role="tabpanel"]');
+    if (panel) {
+      activate(panel.id);
+      requestAnimationFrame(() => target.scrollIntoView({block:'start', behavior:'auto'}));
+    }
+  }
+  for (const [index, tab] of tabs.entries()) {
+    tab.addEventListener('click', () => activate(tab.getAttribute('aria-controls'), true));
+    tab.addEventListener('keydown', event => {
+      const keys = {ArrowRight:(index+1)%tabs.length, ArrowLeft:(index-1+tabs.length)%tabs.length, Home:0, End:tabs.length-1};
+      if (!(event.key in keys)) return;
+      event.preventDefault();
+      activate(tabs[keys[event.key]].getAttribute('aria-controls'), true, true);
+    });
+  }
+  window.addEventListener('hashchange', followHash);
+  window.addEventListener('popstate', followHash);
+  document.querySelectorAll('[data-flash-action]').forEach(button => {
+    button.addEventListener('click', () => {
+      const root = document.getElementById(button.dataset.target);
+      root.querySelectorAll('.flashcard').forEach(card => { card.open = button.dataset.flashAction === 'open'; });
+    });
+  });
+  document.getElementById('print-button').addEventListener('click', () => window.print());
+  let printState = [];
+  window.addEventListener('beforeprint', () => {
+    printState = [...document.querySelectorAll('details')].map(item => [item, item.open]);
+    printState.forEach(([item]) => { item.open = true; });
+  });
+  window.addEventListener('afterprint', () => printState.forEach(([item, open]) => { item.open = open; }));
+  followHash();
+})();
+</script></body></html>
